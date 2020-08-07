@@ -1,6 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, StatusBar, FlatList, ActivityIndicator } from 'react-native';
+import {
+      View, Text, Button, StyleSheet, StatusBar,
+      FlatList, ActivityIndicator, Alert, ScrollView
+} from 'react-native';
 
 let base64 = require('base-64');
 
@@ -15,65 +18,76 @@ let headers = new Headers();
 //headers.append('Content-Type', 'text/json');
 headers.set('Authorization', 'Basic ' + base64.encode(username + ":" + password));
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
       const [isLoading, setLoading] = useState(true);
-      const [data, setData] = useState([]);
-      
+      const [drugs, setDrugs] = useState({})
+      const [lastDrug, setLastBook] = useState("")
 
-/*       useEffect(() => {
-            fetch(obj)
-                  .then(response => {
-                        if (response.status === 200) {
-                              return response.json();
-                        } else {
-                              throw new Error('Something went wrong on api server!');
-                        }
-                  })
-                  .then(response => {
-                        console.debug("respond from api",response);
-                        // ...
-                  }).catch(error => {
-                        console.error("Errors From api",error);
-                  });
-      }, []);
 
-      let obj = {
-            method: 'post',
-            headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  'Origin': '',
-                 // 'Username': '23afgddd',
-               //   'password': 'datahasgon',
-                  'Host': 'https://vetdrugindex.com/api/v1/drug'
-            },
-            body: JSON.stringify({
-                  'userame': 'caondo@timelessveterinary.com',
-                  'password': 'timeles',
-                  //'device': 'android-trials'
-            })
-      } */
-      //console.log(response)
+      let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drugs";
+      let h = new Headers();
+      h.append('Accept', 'application/json');
+      h.append('Content-Type', 'application/json');
+
+      let credentials = base64.encode('23afgddd:datahasgon')
+      let auth = ' Basic ' + credentials;
+
+
+      h.append('Authorization', auth)
+
+      let req = new Request(uri, {
+            method: "GET",
+            headers: h,
+            credentials: 'include',
+
+      });
+      useEffect(() => {
+            const fetchDrugs = () =>
+                  fetch(req)
+                        .then(res => res.json())
+                        .then(data => {
+                              if (data.name == lastDrug) return fetchDrugs()
+                              else
+                                    setDrugs(data)
+                              setLoading(false)
+                        })
+            fetchDrugs()
+      }, [lastDrug])
+
+      console.log("isLoading", drugs);
+
+
       return (
-        <View style={{ flex: 1, padding: 24 }}>
-          {isLoading ? <ActivityIndicator/> : (
-            <FlatList
-              data={data}
-              keyExtractor={({ id }, index) => id}
-              renderItem={({ item }) => (
-                <Text>{item.id}, {item.id}</Text>
-              )}
-            />
-          )}
-        </View>
+            <View style={styles.container}>
+                  {isLoading ? <ActivityIndicator /> :
+                        <ScrollView>
+                             { drugs.map((item) =>(
+                               <View key={item.id}>
+                                    <Text style={styles.item}>{item.name}</Text>
+                               </View>
+                     
+                             ))}
+                        </ScrollView>
+
+                        }
+            </View>
       );
-    };
+};
 export default HomeScreen;
 
 const styles = StyleSheet.create({
       container: {
             flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center'
+          /*   alignItems: 'center',
+            justifyContent: 'center', */
+            paddingTop:40,
+            backgroundColor: '#fff',
+            paddingHorizontal: 20
       },
+      item:{
+            marginTop:15,
+            padding:10,
+            backgroundColor:'whitesmoke',
+            fontSize:25
+      }
 })
