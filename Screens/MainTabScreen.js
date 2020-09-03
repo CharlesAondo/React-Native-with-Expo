@@ -73,7 +73,6 @@ const HomeScreenstack = ({ navigation }) => {
 
       console.log("isLoading", drugs);
 
-
       return (
             <View style={styles.container}>
                   {isLoading ? <ActivityIndicator /> :

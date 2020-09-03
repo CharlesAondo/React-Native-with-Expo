@@ -18,6 +18,7 @@ const DetailsScreen = ({ routes, navigation }) => {
       return (
             <View style={styles.container}>
                   <Header />
+
                   <DrugTabs />
             </View>
       );
@@ -62,7 +63,7 @@ const DrugTabs = () => {
                               tabBarLabel: 'Preacautions',
                               tabBarColor: '#a94442',
                               tabBarIcon: ({ color }) => (
-                                    <FontAwesome5 name="exclamation-triangle" size={26} color={color} />
+                                    <FontAwesome5 name="exclamation-triangle" size={24} color={color} />
                               ),
                         }}
                   />
@@ -82,8 +83,6 @@ const DrugTabs = () => {
 const styles = StyleSheet.create({
       container: {
             flex: 1,
-            /*   alignItems: 'center',
-              justifyContent: 'center', */
             paddingTop: 40,
             backgroundColor: '#fff',
       }
