@@ -13,15 +13,35 @@ import Treatments from './DrugDataScreen/Treatment';
 import Therapeutics from './DrugDataScreen/Therapeutics';
 import Pearls from './DrugDataScreen/Pearls';
 import Preacautions from './DrugDataScreen/Precautions'
+import {AuthContext } from '../components/context';
+
 const Tab = createMaterialBottomTabNavigator();
-const DetailsScreen = ({ routes, navigation }) => {
+const DetailsScreen = ({ route, navigation }) => {
+      const { drug } = route.params;
+
       return (
             <View style={styles.container}>
                   <Header />
-
-                  <DrugTabs />
+                  <Text>Item: {drug.guid}</Text>
+                  <AuthContext.Provider value={drug}>
+                        <DrugTabs/>
+                  </AuthContext.Provider>
+           {/*        <Tab.Navigator>
+                        <Tab.Screen
+                              name="Feed"
+                              component={Treatments}
+                              options={{
+                                    tabBarLabel: 'Dosages',
+                                    tabBarColor: 'green',
+                                    tabBarIcon: ({ color }) => (
+                                          <Fontisto name="injection-syringe" size={26} color={color} />),
+                              }}
+                              
+                        />
+                  </Tab.Navigator> */}
             </View>
       );
+
 };
 
 

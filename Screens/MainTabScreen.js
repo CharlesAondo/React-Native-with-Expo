@@ -15,7 +15,7 @@ import ProfileScreen from './ProfileScreen';
 import ExploreScreen from './ExploreScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import Treatements from '../Screens/DrugDataScreen/Treatment';
 
 //const HomeStack = createStackNavigator();
 const DetailsStact = createStackNavigator();
@@ -83,7 +83,9 @@ const HomeScreenstack = ({ navigation }) => {
                                           <View key={item.id}>
                                                 <TouchableOpacity onPress={() => navigation.navigate('Details',
                                                       {
-                                                            drug: item,
+                                                           drug: item,
+                                                           screen: 'Treatements',
+                                                           params: { drug: item },
                                                       }
                                                 )}>
                                                       <Text style={styles.item}>{item.name}</Text>
@@ -103,16 +105,10 @@ const HomeScreen = ({ navigation }) => {
 
       return (
             <Stack.Navigator headerMode="none">
-                  <Stack.Screen name="Home" component={HomeScreenstack}
-                  /*      options={{
-                             headerStyle: { backgroundColor: 'white' },
-                       
-                             headerLeft: () => (
-                                 <Ionicons.Button name="ios-menu" size={25} backgroundColor="WhiteSmoke" onPress={() => navigation.openDrawer()}></Ionicons.Button>
-                             )
-                             }}  */
+                  <Stack.Screen name="Home" component={HomeScreenstack} />
+                  <Stack.Screen name="Details" component={DetailsScreen}
+                  
                   />
-                  <Stack.Screen name="Details" component={DetailsScreen} />
             </Stack.Navigator>
       );
 }
