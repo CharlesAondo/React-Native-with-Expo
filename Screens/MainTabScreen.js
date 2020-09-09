@@ -84,8 +84,6 @@ const HomeScreenstack = ({ navigation }) => {
                                                 <TouchableOpacity onPress={() => navigation.navigate('Details',
                                                       {
                                                            drug: item,
-                                                           screen: 'Treatements',
-                                                           params: { drug: item },
                                                       }
                                                 )}>
                                                       <Text style={styles.item}>{item.name}</Text>

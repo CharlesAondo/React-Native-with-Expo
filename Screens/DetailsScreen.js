@@ -8,12 +8,14 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import Header from './Header'
+import Header from './../components/detailScreenHeader';
 import Treatments from './DrugDataScreen/Treatment';
 import Therapeutics from './DrugDataScreen/Therapeutics';
 import Pearls from './DrugDataScreen/Pearls';
 import Preacautions from './DrugDataScreen/Precautions'
 import {AuthContext } from '../components/context';
+import Support from '../Screens/Header';
+
 
 const Tab = createMaterialBottomTabNavigator();
 const DetailsScreen = ({ route, navigation }) => {
@@ -21,24 +23,12 @@ const DetailsScreen = ({ route, navigation }) => {
 
       return (
             <View style={styles.container}>
-                  <Header />
-                  <Text>Item: {drug.guid}</Text>
                   <AuthContext.Provider value={drug}>
+                        <Support/>
+                        <Text>Item: {drug.guid}</Text>
+
                         <DrugTabs/>
                   </AuthContext.Provider>
-           {/*        <Tab.Navigator>
-                        <Tab.Screen
-                              name="Feed"
-                              component={Treatments}
-                              options={{
-                                    tabBarLabel: 'Dosages',
-                                    tabBarColor: 'green',
-                                    tabBarIcon: ({ color }) => (
-                                          <Fontisto name="injection-syringe" size={26} color={color} />),
-                              }}
-                              
-                        />
-                  </Tab.Navigator> */}
             </View>
       );
 

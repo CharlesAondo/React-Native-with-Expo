@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import {AntDesign,Ionicons,MaterialIcons} from '@expo/vector-icons'
 import { useNavigation ,useTheme} from '@react-navigation/native';
 import Constant from 'expo-constants'
+import SearchScreen from '../Screens/SearchScreen';
 //import {useDispatch,useSelector} from 'react-redux'
 
 const  Header=({height}) => {
@@ -44,7 +45,7 @@ const  Header=({height}) => {
           margin:5
       }}>
        <Ionicons name="md-search" size={32} color={mycolor} 
-       onPress={()=>navigation.navigate("search")}
+            onPress={()=>navigation.navigate('SupportScreen')}
        
        />
 
