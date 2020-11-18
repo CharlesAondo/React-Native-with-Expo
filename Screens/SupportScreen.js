@@ -9,7 +9,6 @@ import { Entypo } from '@expo/vector-icons';
 import MiniCard from '../components/MiniCard'
 import Constant from 'expo-constants'
 import { useTheme } from '@react-navigation/native'
-import { useSelector, useDispatch } from 'react-redux'
 const { Value, timing } = Animated
 
 //https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=songs&type=video&key=AIzaSyDtCWCduSedfthvh

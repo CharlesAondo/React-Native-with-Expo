@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, StyleSheet, ActivityIndicator } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,31 +8,144 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import Header from './../components/detailScreenHeader';
 import Treatments from './DrugDataScreen/Treatment';
 import Therapeutics from './DrugDataScreen/Therapeutics';
 import Pearls from './DrugDataScreen/Pearls';
 import Preacautions from './DrugDataScreen/Precautions'
-import {AuthContext } from '../components/context';
-import Support from '../Screens/Header';
+import { AuthContext } from '../components/context';
+import Header from '../Screens/Header';
 
+let headers = new Headers();
+let base64 = require('base-64');
 
 const Tab = createMaterialBottomTabNavigator();
-const DetailsScreen = ({ route, navigation }) => {
+const DetailsScreen = ({ route,navigation }) => {
       const { drug } = route.params;
+
+      const [isLoading, setLoading] = useState(true);
+      const [drugs, setDrugs] = useState({})
+      const [lastDrug, setLastBook] = useState("")
+
+
+      let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drug_data/" +drug.id;
+      let h = new Headers();
+      h.append('Accept', 'application/json');
+      h.append('Content-Type', 'application/json');
+
+      let credentials = base64.encode('23afgddd:datahasgon')
+      let auth = ' Basic ' + credentials;
+
+
+      h.append('Authorization', auth)
+
+      let req = new Request(uri, {
+            method: "GET",
+            headers: h,
+            credentials: 'include',
+
+      });
+      useEffect(() => {
+            const fetchDrugs = () =>
+                  fetch(req)
+                        .then(res => res.json())
+                        .then(data => {
+                              if (data.name == lastDrug) return fetchDrugs()
+                              else
+                                    setDrugs(data)
+                              setLoading(false)
+                        })
+            fetchDrugs()
+      }, [lastDrug])
+
+      console.log("isLoading", drugs);
 
       return (
             <View style={styles.container}>
-                  <AuthContext.Provider value={drug}>
-                        <Support/>
-                        <Text>Item: {drug.guid}</Text>
+                  {isLoading ? <ActivityIndicator /> :
+                  <AuthContext.Provider value={drugs}>
+                        <React.Fragment>
+                              <Header/>
+                              <DrugTabs/>
+                        {/*       <ScrollView>
+                                    {drugs.map((item) => (
+                                          <View key={item.id}>
+                                                <TouchableOpacity onPress={() => navigation.navigate('Details',
+                                                      {
+                                                           drug: item,
+                                                      }
+                                                )}>
+                                                      <Text style={styles.item}>{item.name}</Text>
+                                                </TouchableOpacity>
+                                          </View>
 
-                        <DrugTabs/>
-                  </AuthContext.Provider>
+                                    ))}
+                              </ScrollView> */}
+                        </React.Fragment>
+                        </AuthContext.Provider>
+                  }
+            </View>
+      );
+};
+
+
+
+
+/* 
+const DetailsScreen = ({ route, navigation }) => {
+      const { drug } = route.params;
+
+      const [isLoading, setLoading] = useState(true);
+      const [drugs, setDrugs] = useState({})
+      const [lastDrug] = useState("")
+
+
+      let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drug_data/" + drug.id;
+      let h = new Headers();
+      h.append('Accept', 'application/json');
+      h.append('Content-Type', 'application/json');
+
+      let credentials = base64.encode('23afgddd:datahasgon')
+      let auth = ' Basic ' + credentials;
+
+
+      h.append('Authorization', auth)
+
+      let req = new Request(uri, {
+            method: "GET",
+            headers: h,
+            credentials: 'include',
+
+      });
+      useEffect(() => {
+            const fetchDrugs = () =>
+                  fetch(req)
+                        .then(res => res.json())
+                        .then(data => {
+                              if (data.name == lastDrug) return fetchDrugs()
+                              else
+                                    setDrugs(data)
+                              setLoading(false)
+                        })
+            fetchDrugs()
+      }, [lastDrug])
+
+      console.log("isLoading", drugs);
+
+
+      return (
+            <View style={styles.container}>
+              
+                              <AuthContext.Provider value={drugs}>
+                                    <Header />
+
+                                    <DrugTabs />
+                              </AuthContext.Provider>
+             
+
             </View>
       );
 
-};
+}; */
 
 
 export default DetailsScreen;

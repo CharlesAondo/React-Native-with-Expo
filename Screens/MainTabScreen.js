@@ -27,7 +27,7 @@ let base64 = require('base-64');
 
 let url = 'https://vetdrugindex.com/api/v1/drug';
 let username = 'aondocharles@gmail.com';
-let password = 'timeles';
+let password = 'timeless';
 
 
 let headers = new Headers();
@@ -36,6 +36,7 @@ let headers = new Headers();
 headers.set('Authorization', 'Basic ' + base64.encode(username + ":" + password));
 
 const HomeScreenstack = ({ navigation }) => {
+   
       const [isLoading, setLoading] = useState(true);
       const [drugs, setDrugs] = useState({})
       const [lastDrug, setLastBook] = useState("")
@@ -79,10 +80,12 @@ const HomeScreenstack = ({ navigation }) => {
                         <React.Fragment>
                               <Header/>
                               <ScrollView>
+                                    
                                     {drugs.map((item) => (
                                           <View key={item.id}>
                                                 <TouchableOpacity onPress={() => navigation.navigate('Details',
                                                       {
+                                                            
                                                            drug: item,
                                                       }
                                                 )}>

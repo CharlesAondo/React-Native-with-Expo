@@ -1,17 +1,37 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
-import {AuthContext} from '../../components/context'
+import { Text, View, StyleSheet, ScrollView } from 'react-native'
+import { AuthContext } from '../../components/context'
 
-const Treatments = ({route,navigation,props}) => {
-      const  data  = React.useContext(AuthContext);
+const Treatments = ({ route, navigation, props }) => {
+
+      const data = React.useContext(AuthContext);
+      let categories = JSON.stringify(data.categories);
+
       return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                  <Text>
-
-                       {data.reversal_agent}
-                        
-                        </Text>
+            <View style={styles.container}>
+                  <ScrollView>
+                        {Object.keys(categories).map(function (category) {
+                              return <Text>{categories.category}</Text>
+                        })}
+                  </ScrollView>
             </View>
       )
 }
 export default Treatments;
+
+const styles = StyleSheet.create({
+      container: {
+            flex: 1,
+            /*   alignItems: 'center',
+              justifyContent: 'center', */
+            paddingTop: 40,
+            backgroundColor: '#fff',
+            paddingHorizontal: 20
+      },
+      item: {
+
+            fontSize: 25,
+            fontStyle: 'italic'
+      },
+
+})

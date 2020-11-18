@@ -113,7 +113,6 @@ const SignInScreen = ({ navigation }) => {
 
             });
       }
-
       const loginHandle = (userName, password, userTokenRetrived) => {
             let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/login";
             let h = new Headers();
@@ -238,7 +237,7 @@ const SignInScreen = ({ navigation }) => {
                                     secureTextEntry={data.secureTextEntry ? true : false}
                                     style={styles.textInput}
                                     autoCapitalize="none"
-                                    onChangeText={(val) => handlePasswordChange(val)} r
+                                    onChangeText={(val) => handlePasswordChange(val)} 
                               />
                               <TouchableOpacity
                                     onPress={UpdateSecuredEntry}
