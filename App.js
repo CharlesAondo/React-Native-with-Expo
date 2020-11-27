@@ -28,6 +28,8 @@ import SupportScreen from './Screens/SupportScreen';
 import SettingsScreen from './Screens/SettingsScreen';
 import BookmarkScreen from './Screens/BookmarkScreen';
 import { AsyncStorage } from 'react-native';
+import useDatabase from './hooks/useDatabase';
+
 
 function cacheImages(images) {
       return images.map(image => {
@@ -42,10 +44,16 @@ function cacheImages(images) {
 
 const Drawer = createDrawerNavigator();
 const App = () => {
+    
+      const isDBLoadingComplete = useDatabase();
+      console.log('Database Loading...........',isDBLoadingComplete);
+
+
 
       /*       const [isLoading, setIsLoding] = React.useState(true);
             const [userToken, setUserToken] = React.useState(null);
        */
+     
 
       const initialLoginState = {
             isLoading: true,

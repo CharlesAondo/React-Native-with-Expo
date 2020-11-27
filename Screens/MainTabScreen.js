@@ -23,17 +23,8 @@ const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 
 let base64 = require('base-64');
-
-
-let url = 'https://vetdrugindex.com/api/v1/drug';
-let username = 'aondocharles@gmail.com';
-let password = 'timeless';
-
-
 let headers = new Headers();
 
-//headers.append('Content-Type', 'text/json');
-headers.set('Authorization', 'Basic ' + base64.encode(username + ":" + password));
 
 const HomeScreenstack = ({ navigation }) => {
    
@@ -71,8 +62,7 @@ const HomeScreenstack = ({ navigation }) => {
                         })
             fetchDrugs()
       }, [lastDrug])
-
-      console.log("isLoading", drugs);
+      
 
       return (
             <View style={styles.container}>

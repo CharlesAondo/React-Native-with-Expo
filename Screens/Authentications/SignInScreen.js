@@ -20,13 +20,28 @@ import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import { AuthContext } from '../../components/context'
-import Users from '../../model/Users'
+import { AuthContext } from '../../components/context';
+import Users from '../../model/Users';
+import {database} from '../../database/database';
 
-import base64 from 'react-native-base64';
+import * as SQLite from "expo-sqlite"
 
+const db = SQLite.openDatabase('db.db')
 
 const SignInScreen = ({ navigation }) => {
+      db.transaction(
+            tx => {
+              tx.executeSql(
+                'select * from vdi_drugs',
+                [],
+                (_, { rows: { _array } }) => {
+                  console.log("vdi_routes",_array)
+                }
+              );
+            },
+            (t, error) => { console.log("db error load users"); console.log(error) },
+            (_t, _success) => { console.log("loaded users")}
+          );
 
       const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -123,7 +138,6 @@ const SignInScreen = ({ navigation }) => {
             let auth = ' Basic ' + credentials;
 
             h.append('Authorization', auth)
-            //h.append('email','caondo@timelessveterinary.com');
             let myObj = {
                   "email": userName,
                   "password": password,

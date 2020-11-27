@@ -58,7 +58,6 @@ const DetailsScreen = ({ route,navigation }) => {
       }, [lastDrug])
 
       console.log("isLoading", drugs);
-
       return (
             <View style={styles.container}>
                   {isLoading ? <ActivityIndicator /> :
@@ -143,6 +142,7 @@ const DetailsScreen = ({ route, navigation }) => {
              
 
             </View>
+            
       );
 
 }; */
