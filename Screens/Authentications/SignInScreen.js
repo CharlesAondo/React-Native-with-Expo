@@ -27,12 +27,14 @@ import {database} from '../../database/database';
 import * as SQLite from "expo-sqlite"
 
 const db = SQLite.openDatabase('db.db')
+let base64 = require('base-64');
+
 
 const SignInScreen = ({ navigation }) => {
       db.transaction(
             tx => {
               tx.executeSql(
-                'select * from vdi_drugs',
+                'select * from vdi_treatments where id = 253',
                 [],
                 (_, { rows: { _array } }) => {
                   console.log("vdi_routes",_array)

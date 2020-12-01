@@ -8,10 +8,10 @@ const db = SQLite.openDatabase('db.db')
 const ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
       db.transaction((trans) => {
             trans.executeSql(sql, params, (trans, results) => {
-                  resolve('Database Succesfully Initating',results);
+                  resolve('Database Succesfully Initating', results);
             },
                   (error) => {
-                        reject('Database Execution  failed!',error);
+                        reject('Fail to Create Table', error);
                   });
       });
 });
@@ -35,14 +35,13 @@ const dropDatabaseTablesAsync = async () => {
       console.log('Dropping vdi_unit.......', units);
       */
 
-     let drugs = await ExecuteQuery("DROP TABLE vdi_drugs", []);
-     // console.log('Dropping vdi_drugs.......',drugs);
+      let drugs = await ExecuteQuery("DROP TABLE vdi_drugs", []);
+      // console.log('Dropping vdi_drugs.......',drugs);
 
 }
 
 
 const setupCreateTablesAsync = async () => {
-
 
       let RoutesTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_routes (id INTEGER PRIMARY KEY AUTOINCREMENT,name varchar(128)  NOT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
       console.log("Charles Creating VDI Routes! Table...........", RoutesTable);
@@ -50,7 +49,7 @@ const setupCreateTablesAsync = async () => {
 
 
 
-/*
+
       let CalculatorTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_calculators(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(20), created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
       console.log("Charles Creating Calculator! Table...........", CalculatorTable);
       console.log('....................................................................');
@@ -70,14 +69,27 @@ const setupCreateTablesAsync = async () => {
       let drugsUnits = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_unit (id INTEGER PRIMARY KEY AUTOINCREMENT,name varchar(255),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,deleted_at timestamp NULL DEFAULT NULL)", []);
       console.log("Charles Creating VDI Drug Units! Table...........", drugsUnits);
       console.log('....................................................................');
-*/
-      let drugstable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drugs (id INTEGER PRIMARY KEY AUTOINCREMENT,guid varchar(24),name varchar(255),formulation_species_id INTEGER(10),notes string,target_serum_levels string,reversal_agent string,teratogenicity string,contraindications string,interactions string,adverse_effects string,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,deleted_at timestamp NULL DEFAULT NULL)", []);
-      console.log("Charles Creating VDI Drugs! Table...........", drugstable);
 
-       console.log('....................................................................');
 
-       let drugsUnits = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drugs_table (id INTEGER PRIMARY KEY AUTOINCREMENT,guid varchar(25),name varchar(255),formulation_species_id INTEGER(10),notes string,target_serum_levels string,reversal_agent string,contraindications string,interactions string,adverse_effects string,deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
-       console.log("Charles Creating VDI Drug Units! Table...........", drugsUnits);
+
+      let drugsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drugs (id INTEGER PRIMARY KEY AUTOINCREMENT,guid varchar(25),name varchar(255),formulation_species_id INTEGER(10),notes string,target_serum_levels string,reversal_agent string,contraindications string,interactions string,adverse_effects string,deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      console.log("Charles Creating VDI Drugs! Table...........", drugsTable);
+      console.log('....................................................................');
+
+      let brandsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_brands (id INTEGER PRIMARY KEY AUTOINCREMENT,name varchar(255),vdi_is_human_ca_brand INTEGER(10),vdi_is_human_uk_brand INTEGER(10),vdi_is_human_us_brand INTEGER(10),vdi_is_vet_ca_brand INTEGER(10),vdi_is_vet_us_brand INTEGER(10),vdi_is_vet_uk_brand INTEGER(10),vdi_is_other_countries INTEGER(10),deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      console.log("Charles Creating VDI Brands! Table...........", brandsTable);
+      console.log('....................................................................');
+
+
+      let brandDrugsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_brand_drug (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTEGER(10),brand_id INTEGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      console.log("Charles Creating VDI Brands Drug! Table...........", brandDrugsTable);
+      console.log('....................................................................');
+
+
+      let treatmentTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_treatments (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTEGER,indication_name text,expected_effects BLOB,common_combinations text,is_contraindicated INTEGER,vdi_display_order INTEGER,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      console.log("Charles Creating VDI Treatments! Table...........", treatmentTable);
+      console.log('....................................................................');
+
 
 }
 const insertCalculator = async () => {
@@ -118,7 +130,7 @@ const insertCalculator = async () => {
             }
       }
       query = query + ";";
-      let calculatorInsert =  await ExecuteQuery(query, []);
+      let calculatorInsert = await ExecuteQuery(query, []);
       console.log('Charles Inserting Calculators.................................', calculatorInsert);
       console.log('....................................................................');
 }
@@ -132,7 +144,7 @@ const insertAnimalTypes = async () => {
                         "created_at": "2020-05-06T15:44:54.000000Z",
                         "updated_at": "2020-05-06T15:44:54.000000Z"
                   },
-                 
+
             ];
       for (let i = 0; i < calculators.length; ++i) {
             query = query + "('"

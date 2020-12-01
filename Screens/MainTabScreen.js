@@ -33,7 +33,7 @@ const HomeScreenstack = ({ navigation }) => {
       const [lastDrug, setLastBook] = useState("")
 
 
-      let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drugs";
+      let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/treatments";
       let h = new Headers();
       h.append('Accept', 'application/json');
       h.append('Content-Type', 'application/json');
@@ -72,6 +72,7 @@ const HomeScreenstack = ({ navigation }) => {
                               <ScrollView>
                                     
                                     {drugs.map((item) => (
+                                          
                                           <View key={item.id}>
                                                 <TouchableOpacity onPress={() => navigation.navigate('Details',
                                                       {
@@ -79,7 +80,12 @@ const HomeScreenstack = ({ navigation }) => {
                                                            drug: item,
                                                       }
                                                 )}>
-                                                      <Text style={styles.item}>{item.name}</Text>
+                                                      {item.id == 234 ?
+                                                     
+                                                      <Text style={styles.item}>{item.expected_effects}</Text>
+                                                      :
+                                                      null
+                                                      }
                                                 </TouchableOpacity>
                                           </View>
 
