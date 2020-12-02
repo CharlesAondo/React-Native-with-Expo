@@ -34,7 +34,7 @@ const SignInScreen = ({ navigation }) => {
       db.transaction(
             tx => {
               tx.executeSql(
-                'select * from vdi_treatments where id = 253',
+                'select * from vdi_drugs where id = 552',
                 [],
                 (_, { rows: { _array } }) => {
                   console.log("vdi_routes",_array)

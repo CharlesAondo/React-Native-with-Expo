@@ -8789,6 +8789,7 @@ const insertDrugsToDatabaseAsync = async () => {
             }
         ];
 
+
       let query2 = "INSERT INTO vdi_drugs (id, guid, name,formulation_species_id,notes,target_serum_levels,reversal_agent,contraindications,interactions,adverse_effects,deleted_at,created_at,updated_at) VALUES";
 
     
@@ -8800,21 +8801,21 @@ const insertDrugsToDatabaseAsync = async () => {
                   + "','"
                   + drugs[i].guid
                   + "','"
-                  + drugs[i].name
+                  + (drugs[i].name == null ? null : drugs[i].name.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
                   + drugs[i].formulation_species_id
                   + "','"
-                  + drugs[i].notes
+                  + (drugs[i].notes == null ? null : drugs[i].notes.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
-                  + drugs[i].target_serum_levels
+                  + (drugs[i].target_serum_levels == null ? null : drugs[i].target_serum_levels.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
-                  + drugs[i].reversal_agent
+                  + (drugs[i].reversal_agent == null ? null : drugs[i].reversal_agent.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
-                  + drugs[i].contraindications
+                  + (drugs[i].contraindications == null ? null : drugs[i].contraindications.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
-                  + drugs[i].interactions
+                  + (drugs[i].interactions == null ? null : drugs[i].interactions.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
-                  + drugs[i].adverse_effects
+                  + (drugs[i].adverse_effects == null ? null : drugs[i].adverse_effects.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
                   + drugs[i].deleted_at 
                   + "','"
@@ -8827,7 +8828,6 @@ const insertDrugsToDatabaseAsync = async () => {
             }
       }
       query2 = query2 + ";";
-      console.log(query2);
 
       let insertedDrugs = await ExecuteQuery(query2, []);
       console.log('Charles Inserting VDI DRUGS!!.................................', insertedDrugs);

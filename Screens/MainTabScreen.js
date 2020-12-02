@@ -25,67 +25,85 @@ const Stack = createStackNavigator();
 let base64 = require('base-64');
 let headers = new Headers();
 
+import * as SQLite from "expo-sqlite"
+
+const db = SQLite.openDatabase('db.db')
 
 const HomeScreenstack = ({ navigation }) => {
-   
+
       const [isLoading, setLoading] = useState(true);
       const [drugs, setDrugs] = useState({})
       const [lastDrug, setLastBook] = useState("")
 
-
-      let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drugs";
-      let h = new Headers();
-      h.append('Accept', 'application/json');
-      h.append('Content-Type', 'application/json');
-
-      let credentials = base64.encode('23afgddd:datahasgon')
-      let auth = ' Basic ' + credentials;
-
-
-      h.append('Authorization', auth)
-
-      let req = new Request(uri, {
-            method: "GET",
-            headers: h,
-            credentials: 'include',
-
-      });
-      useEffect(() => {
-            const fetchDrugs = () =>
-                  fetch(req)
-                        .then(res => res.json())
-                        .then(data => {
-                              if (data.name == lastDrug) return fetchDrugs()
-                              else
-                                    setDrugs(data)
-                              setLoading(false)
-                        })
-            fetchDrugs()
-      }, [lastDrug])
+      /*
+            let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drugs";
+            let h = new Headers();
+            h.append('Accept', 'application/json');
+            h.append('Content-Type', 'application/json');
       
+            let credentials = base64.encode('23afgddd:datahasgon')
+            let auth = ' Basic ' + credentials;
+      
+      
+            h.append('Authorization', auth)
+      
+            let req = new Request(uri, {
+                  method: "GET",
+                  headers: h,
+                  credentials: 'include',
+      
+            });
+            useEffect(() => {
+                  const fetchDrugs = () =>
+                        fetch(req)
+                              .then(res => res.json())
+                              .then(data => {
+                                    if (data.name == lastDrug) return fetchDrugs()
+                                    else
+                                          setDrugs(data)
+                                    setLoading(false)
+                              })
+                  fetchDrugs()
+            }, [lastDrug])
+            
+      */
+      useEffect(() => {
+            const getDrugs = () => {
+                  db.transaction(
+                        tx => {
+                              tx.executeSql(
+                                    'select * from vdi_drugs',
+                                    [],
+                                    (_, { rows: { _array } }) => {
+
+                                          console.log("vdi_drugs", _array)
+                                          setDrugs(_array)
+                                          setLoading(false)
+                                    }
+                              );
+                        },
+                  );
+            }
+            getDrugs()
+
+      }, [])
 
       return (
             <View style={styles.container}>
                   {isLoading ? <ActivityIndicator /> :
                         <React.Fragment>
-                              <Header/>
+                              <Header />
                               <ScrollView>
-                                    
+
                                     {drugs.map((item) => (
-                                          
                                           <View key={item.id}>
                                                 <TouchableOpacity onPress={() => navigation.navigate('Details',
                                                       {
-                                                            
-                                                           drug: item,
+
+                                                            drug: item,
                                                       }
                                                 )}>
-                                                      {item.id == 234 ?
-                                                     
-                                                      <Text style={styles.item}>{item.expected_effects}</Text>
-                                                      :
-                                                      null
-                                                      }
+                                                      <Text style={styles.item}>{item.name}</Text>
                                                 </TouchableOpacity>
                                           </View>
 
@@ -104,7 +122,7 @@ const HomeScreen = ({ navigation }) => {
             <Stack.Navigator headerMode="none">
                   <Stack.Screen name="Home" component={HomeScreenstack} />
                   <Stack.Screen name="Details" component={DetailsScreen}
-                  
+
                   />
             </Stack.Navigator>
       );
