@@ -33,7 +33,7 @@ const HomeScreenstack = ({ navigation }) => {
       const [lastDrug, setLastBook] = useState("")
 
 
-      let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/treatments";
+      let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drugs";
       let h = new Headers();
       h.append('Accept', 'application/json');
       h.append('Content-Type', 'application/json');

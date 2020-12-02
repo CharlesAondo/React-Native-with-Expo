@@ -16,10 +16,7 @@ const ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
 
 const insertDrugsToDatabaseAsync = async () => {
 
-      let target = "Hypoglycemia\nHypersensitivity to's the drug";
-
-    
-      alert(target.replace("'", "\\'"));
+ 
 
       let drugs = [
             {
@@ -8793,6 +8790,10 @@ const insertDrugsToDatabaseAsync = async () => {
         ];
 
       let query2 = "INSERT INTO vdi_drugs (id, guid, name,formulation_species_id,notes,target_serum_levels,reversal_agent,contraindications,interactions,adverse_effects,deleted_at,created_at,updated_at) VALUES";
+
+    
+      //alert(target.replace("'", "\\'"));
+      
       for (let i = 0; i < drugs.length; ++i) {
             query2 = query2 + "('"
                   + drugs[i].id //id

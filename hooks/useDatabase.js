@@ -22,10 +22,12 @@ const useDatabase = () => {
                         await drugInsert.insertDrugsToDatabaseAsync();
                         await brands.insertBrandsToDatabaseAsync();
                         await brandDrug.insertBrandDrugAsync();
-                      */
-                        //await drugInsert.insertDrugsToDatabaseAsync();
+                    
 
                         await insertTreatments.insertTreatmentsToDatabaseAsync();
+                          */
+                        await drugInsert.insertDrugsToDatabaseAsync();
+
 
                         setDBLoadingComplete(true);
                   } catch (e) {
