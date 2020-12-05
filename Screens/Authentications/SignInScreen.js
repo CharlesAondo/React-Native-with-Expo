@@ -37,7 +37,7 @@ const SignInScreen = ({ navigation }) => {
                 'select * from vdi_drugs where id = 552',
                 [],
                 (_, { rows: { _array } }) => {
-                  console.log("vdi_routes",_array)
+                //  console.log("vdi_routes",_array)
                 }
               );
             },

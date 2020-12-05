@@ -86,10 +86,19 @@ const setupCreateTablesAsync = async () => {
       console.log('....................................................................');
 
 
-      let treatmentTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_treatments (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTEGER,indication_name text,expected_effects BLOB,common_combinations text,is_contraindicated INTEGER,vdi_display_order INTEGER,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
-      console.log("Charles Creating VDI Treatments! Table...........", treatmentTable);
+      let categoryTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drug_categories (id INTEGER PRIMARY KEY AUTOINCREMENT,guid varchar(24),name varchar(255),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      console.log("Charles Creating VDI  Categories! Table...........", categoryTable);
       console.log('....................................................................');
 
+      let drugCategoryDrug = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drug_category_drug (id INTEGER PRIMARY KEY AUTOINCREMENT,category_id INTERGER(10),drug_id INTERGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,FOREIGN KEY (category_id) REFERENCES vdi_drug_categories(id),FOREIGN KEY (drug_id) REFERENCES vdi_drugs(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating VDI  Drug Cateogries Drugs! Table...........", drugCategoryDrug);
+      console.log('....................................................................');
+
+
+
+      let treatmentTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_treatments (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTEGER,indication_name text,expected_effects BLOB,common_combinations text,is_contraindicated INTEGER,vdi_display_order INTEGER,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      console.log("Charles Creating Treatments! Table...........", treatmentTable);
+      console.log('....................................................................');
 
 }
 const insertCalculator = async () => {

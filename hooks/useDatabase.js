@@ -7,6 +7,8 @@ import { routeInsert } from '../database/routeInsert';
 import { brands } from '../database/brands';
 import { brandDrug } from '../database/brandDrug';
 import { insertTreatments } from '../database/insertTreatments';
+import {categories} from '../database/categories';
+import {drugCategoryDrug} from '../database/drugCategoryDrug';
 
 const useDatabase = () => {
       const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
@@ -14,9 +16,10 @@ const useDatabase = () => {
       useEffect(() => {
             async function loadDataAsync() {
                   try {
+                          
                         // await database.dropDatabaseTablesAsync();
                         await database.setupCreateTablesAsync();
-                        /*
+                      /*
                         await database.insertCalculator()
                         await routeInsert.insertRoutesAsync();
                         await drugInsert.insertDrugsToDatabaseAsync();
@@ -24,10 +27,14 @@ const useDatabase = () => {
                         await brandDrug.insertBrandDrugAsync();
                     
 
-                        await insertTreatments.insertTreatmentsToDatabaseAsync();
-                          */
+                
+                      
+   */
                         await drugInsert.insertDrugsToDatabaseAsync();
-
+                        await categories.insertCategoriesAsync();
+                        await drugCategoryDrug.insertDrugCategoriesAsync();
+                        await insertTreatments.insertTreatmentsToDatabaseAsync();
+                         
 
                         setDBLoadingComplete(true);
                   } catch (e) {

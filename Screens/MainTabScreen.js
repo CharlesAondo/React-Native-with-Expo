@@ -15,7 +15,6 @@ import ProfileScreen from './ProfileScreen';
 import ExploreScreen from './ExploreScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Treatements from '../Screens/DrugDataScreen/Treatment';
 
 //const HomeStack = createStackNavigator();
 const DetailsStact = createStackNavigator();
@@ -33,8 +32,6 @@ const HomeScreenstack = ({ navigation }) => {
 
       const [isLoading, setLoading] = useState(true);
       const [drugs, setDrugs] = useState({})
-      const [lastDrug, setLastBook] = useState("")
-
       /*
             let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drugs";
             let h = new Headers();
@@ -76,7 +73,7 @@ const HomeScreenstack = ({ navigation }) => {
                                     [],
                                     (_, { rows: { _array } }) => {
 
-                                          console.log("vdi_drugs", _array)
+                                       //   console.log("vdi_drugs", _array)
                                           setDrugs(_array)
                                           setLoading(false)
                                     }
