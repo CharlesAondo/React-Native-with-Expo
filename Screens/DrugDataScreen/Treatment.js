@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { AuthContext } from '../../components/context'
 
 import * as SQLite from "expo-sqlite"
+import { color } from 'react-native-reanimated';
 
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
@@ -37,18 +38,27 @@ const Treatments = ({ route, navigation, props }) => {
             loadingCategory: true
       })
       useEffect(() => {
-            /*
-                       const   getData = async()=>{
-                              let selectQuery = await ExecuteQuery('SELECT * FROM vdi_treatments where drug_id ='+drug.id,[]);
-                              var rows = selectQuery.rows;
-            
-                             setData({
-                                   isLoading:false,
-                                   treatment_data
-                             })
-                              console.log(item)
-                            }
-                            */
+   
+            const categories = () => {
+                  db.transaction(
+                        tx => {
+                              tx.executeSql(
+                                    'select * from vdi_drug_categories vdc INNER JOIN vdi_drug_category_drug vdcd on  vdcd.category_id = vdc.id where vdcd.drug_id = ' + drug.id,
+                                    [],
+                                    (_, { rows: { _array } }) => {
+                                          console.log(_array)
+                                          setCate({
+                                                ...cateData,
+                                                categories: _array,
+                                                loadingCategory: false
+
+                                          })
+
+                                    }
+                              );
+                        },
+                  );
+            }
 
             const getData = () => {
                   db.transaction(
@@ -69,41 +79,23 @@ const Treatments = ({ route, navigation, props }) => {
                   );
 
             }
-            const categories = () => {
-                  db.transaction(
-                        tx => {
-                              tx.executeSql(
-                                    'select * from vdi_drug_category_drug where drug_id = ' + drug.id,
-                                    [],
-                                    (_, { rows: { _array } }) => {
-                                          setCate({
-                                                ...cateData,
-                                                categories: _array,
-                                                loadingCategory: false
-
-                                          })
-
-                                    }
-                              );
-                        },
-                  );
-            }
 
 
-            // getData()
-            getData()
+        
             categories()
+            getData()
+          
 
       }, [])
 
 
       console.log('categorioes', cateData.categories)
-      console.log('treaments', data.treatment_data)
+     console.log('treaments', data.treatment_data)
 
 
       return (
             <View style={styles.container}>
-                  {data.isLoading  || cateData.loadingCategory ? <ActivityIndicator /> :
+                  {data.isLoading || cateData.loadingCategory ? <ActivityIndicator /> :
 
                         <ScrollView>
                               {cateData.categories.map((item) => (
@@ -114,7 +106,7 @@ const Treatments = ({ route, navigation, props }) => {
                                                       treatment_data: item,
                                                 }
                                           )}>
-                                                <Text style={styles.item}>{item.id}</Text>
+                                                <Text style={styles.category_item}>{item.name}</Text>
                                           </TouchableOpacity>
                                     </View>
 
@@ -147,14 +139,25 @@ const styles = StyleSheet.create({
             flex: 1,
             /*   alignItems: 'center',
               justifyContent: 'center', */
-            paddingTop: 40,
+            paddingTop: 5,
             backgroundColor: '#fff',
             paddingHorizontal: 20
+      },
+      category_item: {
+            fontSize: 20,
+            fontStyle: 'italic',
+            textAlign: "right",
+            backgroundColor:'#A0C49B',
+            borderRadius:10,
+            
+            
       },
       item: {
 
             fontSize: 25,
-            fontStyle: 'italic'
+            fontStyle: 'italic',
+      
+            
       },
 
 })

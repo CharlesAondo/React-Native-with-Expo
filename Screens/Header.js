@@ -48,7 +48,7 @@ const Header = ({ height }) => {
                         <TextInput
                               placeholder={data.name}
                               style={styles.input}
-                              onPress={() => navigation.navigate('SupportScreen')}
+                              onChange={() => navigation.navigate('SupportScreen')}
                         />
                         <Ionicons name="md-search" size={32} color={mycolor}
                               onPress={() => navigation.navigate('SupportScreen')}
