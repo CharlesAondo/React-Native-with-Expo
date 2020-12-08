@@ -139,6 +139,20 @@ const Treatments = ({ route, navigation, props }) => {
 
                               ))}
 
+                              {brandsData.brands.map((item) => (
+                                    <View key={item.id}>
+                                          <TouchableOpacity onPress={() => navigation.navigate('Details',
+                                                {
+
+                                                      treatment_data: item,
+                                                }
+                                          )}>
+                                                <Text style={styles.category_item}>{item.name}</Text>
+                                          </TouchableOpacity>
+                                    </View>
+
+                              ))}
+
                               {data.treatment_data.map((item) => (
                                     <View key={item.id}>
                                           <TouchableOpacity onPress={() => navigation.navigate('Details',
