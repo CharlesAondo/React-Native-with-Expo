@@ -34,10 +34,10 @@ const SignInScreen = ({ navigation }) => {
       db.transaction(
             tx => {
               tx.executeSql(
-                'select * from vdi_drugs where id = 552',
+                'select * from vdi_pearl_references where id = 150',
                 [],
                 (_, { rows: { _array } }) => {
-                //  console.log("vdi_routes",_array)
+                 console.log("vdi_routes",_array)
                 }
               );
             },

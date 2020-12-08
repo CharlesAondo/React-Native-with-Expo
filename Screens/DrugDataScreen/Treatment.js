@@ -37,8 +37,12 @@ const Treatments = ({ route, navigation, props }) => {
             categories: '',
             loadingCategory: true
       })
+      const [brandsData, setBrands] = React.useState({
+            brands: '',
+            loadingBrands: true
+      })
       useEffect(() => {
-   
+
             const categories = () => {
                   db.transaction(
                         tx => {
@@ -51,6 +55,27 @@ const Treatments = ({ route, navigation, props }) => {
                                                 ...cateData,
                                                 categories: _array,
                                                 loadingCategory: false
+
+                                          })
+
+                                    }
+                              );
+                        },
+                  );
+            }
+
+            const getBrands = () => {
+                  db.transaction(
+                        tx => {
+                              tx.executeSql(
+                                    'select * from vdi_brand_drug vbd  INNER JOIN vdi_brands  vb on vbd.brand_id = vb.id  where drug_id = ' + drug.id,
+                                    [],
+                                    (_, { rows: { _array } }) => {
+                                          console.log(_array)
+                                          setBrands({
+                                                ...brandsData,
+                                                brands: _array,
+                                                loadingBrands: false
 
                                           })
 
@@ -81,21 +106,23 @@ const Treatments = ({ route, navigation, props }) => {
             }
 
 
-        
-            categories()
+
+            categories(),
+            getBrands(),
             getData()
-          
+
 
       }, [])
 
 
-      console.log('categorioes', cateData.categories)
-     console.log('treaments', data.treatment_data)
+      console.log('brands', setBrands.brands)
+
 
 
       return (
             <View style={styles.container}>
-                  {data.isLoading || cateData.loadingCategory ? <ActivityIndicator /> :
+
+                  {data.isLoading || cateData.loadingCategory || brandsData.loadingBrands? <ActivityIndicator /> :
 
                         <ScrollView>
                               {cateData.categories.map((item) => (
@@ -128,6 +155,7 @@ const Treatments = ({ route, navigation, props }) => {
 
                         </ScrollView>
                   }
+
             </View>
       )
 
@@ -147,17 +175,30 @@ const styles = StyleSheet.create({
             fontSize: 20,
             fontStyle: 'italic',
             textAlign: "right",
-            backgroundColor:'#A0C49B',
-            borderRadius:10,
-            
-            
+            backgroundColor: '#cbfccb',
+            borderRadius: 10,
+
+
       },
       item: {
 
             fontSize: 25,
             fontStyle: 'italic',
-      
-            
+
+
+      },
+      indication_title: {
+
+            fontSize: 25,
+            fontWeight: 'bold',
+            fontSize: 20,
+            fontStyle: 'italic',
+            textAlign: 'left',
+            backgroundColor: '#108610',
+            borderRadius: 10,
+
+
+
       },
 
 })

@@ -9,6 +9,8 @@ import { brandDrug } from '../database/brandDrug';
 import { insertTreatments } from '../database/insertTreatments';
 import {categories} from '../database/categories';
 import {drugCategoryDrug} from '../database/drugCategoryDrug';
+import {pearls} from '../database/pearls';
+import {pearl_references} from '../database/pearl_references';
 
 const useDatabase = () => {
       const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
@@ -23,17 +25,19 @@ const useDatabase = () => {
                         await database.insertCalculator()
                         await routeInsert.insertRoutesAsync();
                         await drugInsert.insertDrugsToDatabaseAsync();
-                        await brands.insertBrandsToDatabaseAsync();
-                        await brandDrug.insertBrandDrugAsync();
                     
-
-                
+                               
                       
    */
                         await drugInsert.insertDrugsToDatabaseAsync();
                         await categories.insertCategoriesAsync();
                         await drugCategoryDrug.insertDrugCategoriesAsync();
                         await insertTreatments.insertTreatmentsToDatabaseAsync();
+                        await brands.insertBrandsToDatabaseAsync();
+                        await brandDrug.insertBrandDrugAsync();
+                        await pearls.insertPearlsToDatabaseAsync();
+                        await pearl_references.insertPearlReferenceToDatabaseAsync();
+
                          
 
                         setDBLoadingComplete(true);

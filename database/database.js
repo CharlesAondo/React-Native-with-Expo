@@ -81,7 +81,7 @@ const setupCreateTablesAsync = async () => {
       console.log('....................................................................');
 
 
-      let brandDrugsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_brand_drug (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTEGER(10),brand_id INTEGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      let brandDrugsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_brand_drug (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTEGER(10),brand_id INTEGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,FOREIGN KEY (brand_id) REFERENCES vdi_brands(id),FOREIGN KEY (drug_id) REFERENCES vdi_drugs(id))",'PRAGMA foreign_keys = ON', []);
       console.log("Charles Creating VDI Brands Drug! Table...........", brandDrugsTable);
       console.log('....................................................................');
 
@@ -99,6 +99,17 @@ const setupCreateTablesAsync = async () => {
       let treatmentTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_treatments (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTEGER,indication_name text,expected_effects BLOB,common_combinations text,is_contraindicated INTEGER,vdi_display_order INTEGER,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
       console.log("Charles Creating Treatments! Table...........", treatmentTable);
       console.log('....................................................................');
+
+
+      let pearlsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_pearls (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTEGER,notes text,is_visible INTEGER,display_order INTEGER,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,deleted_at timestamp NULL DEFAULT NULL)", []);
+      console.log("Charles Creating Pearls! Table...........", pearlsTable);
+      console.log('....................................................................');
+
+
+      let pearlReferences = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_pearl_references (id INTEGER PRIMARY KEY AUTOINCREMENT,pearl_id INTERGER(10),title varchar(255),pub_med_id INTERGER(10),url varchar(255),ebm INTERGER(10),display_order INTERGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,deleted_at timestamp NULL DEFAULT NULL,FOREIGN KEY (pearl_id) REFERENCES vdi_pearls(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating VDI  Pearl References! Table...........", pearlReferences);
+      console.log('....................................................................');
+
 
 }
 const insertCalculator = async () => {
