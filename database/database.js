@@ -72,7 +72,7 @@ const setupCreateTablesAsync = async () => {
 
 
 
-      let drugsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drugs (id INTEGER PRIMARY KEY AUTOINCREMENT,guid varchar(25),name varchar(255),formulation_species_id INTEGER(10),notes string,target_serum_levels string,reversal_agent string,contraindications string,interactions string,adverse_effects string,deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      let drugsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drugs (id INTEGER PRIMARY KEY AUTOINCREMENT,guid varchar(25),name varchar(255),formulation_species_id INTEGER(10),notes string,target_serum_levels string,reversal_agent string,teratogenicity string,contraindications string,interactions string,adverse_effects string,deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
       console.log("Charles Creating VDI Drugs! Table...........", drugsTable);
       console.log('....................................................................');
 
@@ -108,6 +108,12 @@ const setupCreateTablesAsync = async () => {
 
       let pearlReferences = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_pearl_references (id INTEGER PRIMARY KEY AUTOINCREMENT,pearl_id INTERGER(10),title varchar(255),pub_med_id INTERGER(10),url varchar(255),ebm INTERGER(10),display_order INTERGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,deleted_at timestamp NULL DEFAULT NULL,FOREIGN KEY (pearl_id) REFERENCES vdi_pearls(id))",'PRAGMA foreign_keys = ON', []);
       console.log("Charles Creating VDI  Pearl References! Table...........", pearlReferences);
+      console.log('....................................................................');
+
+
+
+      let precautionReferences = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_precaution_references (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTERGER(10),title varchar(255),pub_med_id INTERGER(10),url varchar(255),ebm INTERGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,deleted_at timestamp NULL DEFAULT NULL,FOREIGN KEY (drug_id) REFERENCES vdi_drugs(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating VDI  Precaution References! Table...........", precautionReferences);
       console.log('....................................................................');
 
 

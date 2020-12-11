@@ -27,7 +27,6 @@ const Treatments = ({ route, navigation, props }) => {
       const drug = React.useContext(AuthContext);
       const [drugs, setDrugs] = useState({})
 
-
       const [data, setData] = React.useState({
             treatment_data: '',
             isLoading: true
@@ -115,7 +114,7 @@ const Treatments = ({ route, navigation, props }) => {
       }, [])
 
 
-      console.log('brands', setBrands.brands)
+      //console.log('brands', setBrands.brands)
 
 
 

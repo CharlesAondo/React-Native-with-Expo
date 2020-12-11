@@ -8790,7 +8790,7 @@ const insertDrugsToDatabaseAsync = async () => {
         ];
 
 
-      let query2 = "INSERT INTO vdi_drugs (id, guid, name,formulation_species_id,notes,target_serum_levels,reversal_agent,contraindications,interactions,adverse_effects,deleted_at,created_at,updated_at) VALUES";
+      let query2 = "INSERT INTO vdi_drugs (id, guid, name,formulation_species_id,notes,target_serum_levels,reversal_agent,contraindications,teratogenicity,interactions,adverse_effects,deleted_at,created_at,updated_at) VALUES";
 
     
       //alert(target.replace("'", "\\'"));
@@ -8810,6 +8810,8 @@ const insertDrugsToDatabaseAsync = async () => {
                   + (drugs[i].target_serum_levels == null ? null : drugs[i].target_serum_levels.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
                   + (drugs[i].reversal_agent == null ? null : drugs[i].reversal_agent.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
+                  + "','"
+                  + (drugs[i].teratogenicity == null ? null : drugs[i].teratogenicity.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
                   + (drugs[i].contraindications == null ? null : drugs[i].contraindications.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"

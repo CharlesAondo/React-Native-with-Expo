@@ -10,7 +10,7 @@ import { Entypo } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import Treatments from './DrugDataScreen/Treatment';
 import Therapeutics from './DrugDataScreen/Therapeutics';
-import Pearls from './DrugDataScreen/Pearls';
+import PearlsScreen from './DrugDataScreen/PearlsScreen';
 import Preacautions from './DrugDataScreen/Precautions'
 import { AuthContext } from '../components/context';
 import Header from '../Screens/Header';
@@ -101,7 +101,7 @@ const DrugTabs = () => {
                   />
                   <Tab.Screen
                         name="Pearls"
-                        component={Pearls}
+                        component={PearlsScreen}
                         options={{
                               tabBarLabel: 'Pearls',
                               tabBarColor: '#808080',

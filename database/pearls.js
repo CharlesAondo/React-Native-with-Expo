@@ -14797,7 +14797,7 @@ const insertPearlsToDatabaseAsync = async () => {
                   + "','"
                   + data[i].drug_id //id
                   + "','"
-                  + (data[i].notes == null ? null : data[i].notes.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
+                  + (data[i].notes == null ? null : data[i].notes.replace(/[`~!@#$^?'"\\]/gi, '\\'))
                   + "','"
                   + data[i].is_visible
                   + "','"

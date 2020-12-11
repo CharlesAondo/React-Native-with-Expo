@@ -11,6 +11,7 @@ import {categories} from '../database/categories';
 import {drugCategoryDrug} from '../database/drugCategoryDrug';
 import {pearls} from '../database/pearls';
 import {pearl_references} from '../database/pearl_references';
+import {precaution_references} from '../database/precaution_references';
 
 const useDatabase = () => {
       const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
@@ -37,6 +38,8 @@ const useDatabase = () => {
                         await brandDrug.insertBrandDrugAsync();
                         await pearls.insertPearlsToDatabaseAsync();
                         await pearl_references.insertPearlReferenceToDatabaseAsync();
+                        await precaution_references.insertPrecautionReferences();
+                        
 
                          
 

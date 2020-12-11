@@ -34,7 +34,7 @@ const SignInScreen = ({ navigation }) => {
       db.transaction(
             tx => {
               tx.executeSql(
-                'select * from vdi_pearl_references where id = 150',
+                'select * from vdi_precaution_references where id = 2',
                 [],
                 (_, { rows: { _array } }) => {
                  console.log("vdi_routes",_array)
