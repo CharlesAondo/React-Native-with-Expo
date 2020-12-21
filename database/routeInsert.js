@@ -597,7 +597,7 @@ const insertRoutesAsync = async () => {
                   + "','"
                   + routes[i].created_at //last_name
                   + "','"
-                  + routes[i].upd //is_deleted
+                  + routes[i].updated_at //is_deleted
                   + "')";
             if (i != routes.length - 1) {
                   query2 = query2 + ",";

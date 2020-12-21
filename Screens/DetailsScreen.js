@@ -20,8 +20,7 @@ import * as SQLite from "expo-sqlite"
 
 const Tab = createMaterialBottomTabNavigator();
 const DetailsScreen = ({ route,navigation }) => {
-      const db = SQLite.openDatabase('db.db')
-
+      
       const { drug } = route.params;
 
       const [isLoading, setLoadingData] = useState(true);
@@ -46,9 +45,9 @@ const DetailsScreen = ({ route,navigation }) => {
                         <React.Fragment>
                               <Header/>
                               <DrugTabs/>
-        
+
                         </React.Fragment>
-                        </AuthContext.Provider>
+                  </AuthContext.Provider>
                   }
             </View>
       );

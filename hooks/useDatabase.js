@@ -7,11 +7,13 @@ import { routeInsert } from '../database/routeInsert';
 import { brands } from '../database/brands';
 import { brandDrug } from '../database/brandDrug';
 import { insertTreatments } from '../database/insertTreatments';
-import {categories} from '../database/categories';
-import {drugCategoryDrug} from '../database/drugCategoryDrug';
-import {pearls} from '../database/pearls';
-import {pearl_references} from '../database/pearl_references';
-import {precaution_references} from '../database/precaution_references';
+import { categories } from '../database/categories';
+import { drugCategoryDrug } from '../database/drugCategoryDrug';
+import { pearls } from '../database/pearls';
+import { pearl_references } from '../database/pearl_references';
+import { precaution_references } from '../database/precaution_references';
+import { insertUnits } from '../database/insertUnits';
+import { insertDosages } from '../database/insertDosages';
 
 const useDatabase = () => {
       const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
@@ -19,17 +21,13 @@ const useDatabase = () => {
       useEffect(() => {
             async function loadDataAsync() {
                   try {
-                          
+
                         // await database.dropDatabaseTablesAsync();
                         await database.setupCreateTablesAsync();
-                      /*
+
                         await database.insertCalculator()
                         await routeInsert.insertRoutesAsync();
-                        await drugInsert.insertDrugsToDatabaseAsync();
-                    
-                               
-                      
-   */
+
                         await drugInsert.insertDrugsToDatabaseAsync();
                         await categories.insertCategoriesAsync();
                         await drugCategoryDrug.insertDrugCategoriesAsync();
@@ -39,9 +37,11 @@ const useDatabase = () => {
                         await pearls.insertPearlsToDatabaseAsync();
                         await pearl_references.insertPearlReferenceToDatabaseAsync();
                         await precaution_references.insertPrecautionReferences();
-                        
+                        await insertUnits.insertUnitsAsync();
+                        await insertDosages.insertDosagesAsync();
 
-                         
+
+
 
                         setDBLoadingComplete(true);
                   } catch (e) {

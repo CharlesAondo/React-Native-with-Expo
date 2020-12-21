@@ -31,10 +31,11 @@ let base64 = require('base-64');
 
 
 const SignInScreen = ({ navigation }) => {
+
       db.transaction(
             tx => {
               tx.executeSql(
-                'select * from vdi_precaution_references where id = 2',
+                'select * from vdi_dosages where id = 3',
                 [],
                 (_, { rows: { _array } }) => {
                  console.log("vdi_routes",_array)
