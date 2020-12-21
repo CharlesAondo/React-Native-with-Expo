@@ -65,18 +65,18 @@ const Precautions = ({ route, navigation, props }) => {
                   {references.isPrecautionReferenceLoading ? <ActivityIndicator /> :
 
                         <ScrollView>
-                              <Text style={styles.contrainIndication_title}>CONTRAINDICATIONS</Text>
+                              <Text style={styles.header}>CONTRAINDICATIONS</Text>
 
                               <Text style={styles.item}>{drug.contraindications}</Text>
 
                               <Text ></Text>
 
-                              <Text style={styles.contrainIndication_title}>ADVERSE EFFECTS</Text>
+                              <Text style={styles.header}>ADVERSE EFFECTS</Text>
 
 
                               {drug.adverse_effects.split('\n').map((item, i) =>
 
-                                    <Text style={styles.title} key={i}>{item}</Text>
+                                    <Text style={styles.item} key={i}>{item}</Text>
 
                               )}
                               <Text ></Text>
@@ -84,7 +84,7 @@ const Precautions = ({ route, navigation, props }) => {
                               <Text style={styles.header}>TERATOGENICITY/PREGNANCY/LACTATIONS</Text>
                               {drug.teratogenicity.split('\n').map((item, i) =>
 
-                                    <Text style={styles.title} key={i}>{item}</Text>
+                                    <Text style={styles.item} key={i}>{item}</Text>
 
                               )}
 
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
       },
       header: {
             marginTop: 10,
-            paddingVertical: 8,
+            paddingVertical: 5,
             borderWidth: 3,
             borderColor: '#108610',
             borderRadius: 6,
@@ -165,5 +165,6 @@ const styles = StyleSheet.create({
             fontSize: 15,
             fontWeight: "bold"
       }
+
 
 })
