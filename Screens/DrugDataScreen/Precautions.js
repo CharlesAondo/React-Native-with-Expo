@@ -5,6 +5,8 @@ import { AuthContext } from '../../components/context'
 
 import * as SQLite from "expo-sqlite"
 import { color } from 'react-native-reanimated';
+import { WebView } from 'react-native-webview';
+
 
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
@@ -98,6 +100,7 @@ const Precautions = ({ route, navigation, props }) => {
                                                       treatment_data: item,
                                                 }
                                           )}>
+                                           
                                                 <Text style={styles.item}>{item.pub_med_id}</Text>
                                           </TouchableOpacity>
                                     </View>

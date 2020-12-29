@@ -14,6 +14,7 @@ import { pearl_references } from '../database/pearl_references';
 import { precaution_references } from '../database/precaution_references';
 import { insertUnits } from '../database/insertUnits';
 import { insertDosages } from '../database/insertDosages';
+import {therapeutic_references} from '../database/therapeutic_reference';
 
 const useDatabase = () => {
       const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
@@ -39,6 +40,7 @@ const useDatabase = () => {
                         await precaution_references.insertPrecautionReferences();
                         await insertUnits.insertUnitsAsync();
                         await insertDosages.insertDosagesAsync();
+                        await  therapeutic_references.insertTherapeuticReferencesAsync();
 
 
 
