@@ -34649,7 +34649,7 @@ const insertDosagesAsync = async () =>{
                   + "','"
                   + (data[i].interval == null ? null : data[i].interval.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
-                  + data[i].vdi_display_order
+                  + (data[i].display_order)
                   + "','"
                   + (data[i].administrative_notes == null ? null : data[i].administrative_notes.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
