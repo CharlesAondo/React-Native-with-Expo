@@ -5,6 +5,7 @@ import { AuthContext } from '../../components/context'
 
 import * as SQLite from "expo-sqlite"
 import { color } from 'react-native-reanimated';
+import * as WebBrowser from 'expo-web-browser';
 
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
@@ -28,18 +29,27 @@ const PearlsScreen = ({ route, navigation, props }) => {
 
       const [pearls, setPearl] = React.useState({
             pearl_data: '',
-            isPearlLoading: true
+            isPearlLoading: true,
+            links :''
       })
-
+      const handleLinks = (links) => {
+            let url = '';
+            if (isNaN(links)) {
+                  url = links.url;
+            } else {
+                  url = 'https://pubmed.ncbi.nlm.nih.gov/' + links;
+            }
+            WebBrowser.openBrowserAsync(url);
+      }
 
       useEffect(() => {
 
-      
+
             const getData = () => {
                   db.transaction(
                         tx => {
                               tx.executeSql(
-                                    'select * from vdi_pearls where drug_id = ' + drug.id, 
+                                    'SELECT vp.*, GROUP_CONCAT(COALESCE(vpr.pub_med_id, vpr.url)) medids FROM vdi_pearls vp LEFT OUTER JOIN vdi_pearl_references vpr ON vpr.pearl_id = vp.id WHERE drug_id = ' + drug.id + ' GROUP BY vp.id',
                                     [],
                                     (_, { rows: { _array } }) => {
                                           setPearl({
@@ -54,12 +64,12 @@ const PearlsScreen = ({ route, navigation, props }) => {
                   );
 
             }
-       
+
             getData()
 
 
       }, [])
-
+      console.log(pearls.pearl_data);
       return (
             <View style={styles.container}>
 
@@ -68,14 +78,28 @@ const PearlsScreen = ({ route, navigation, props }) => {
                         <ScrollView>
                               {pearls.pearl_data.map((item) => (
                                     <View key={item.id}>
-                                          <TouchableOpacity onPress={() => navigation.navigate('Details',
-                                                {
+                                          <Text style={styles.group_item}>
+                                                <Text style={styles.item}>{item.notes} </Text>
 
-                                                      treatment_data: item,
-                                                }
-                                          )}>
-                                                <Text style={styles.item}>{item.notes}</Text>
-                                          </TouchableOpacity>
+                                                <Text>
+                                                      {item.medids === null ?
+                                                            <Text></Text>
+                                                            :
+                                                           
+                                                            item.medids.split(',').map((link, i) =>
+
+                                                                  <TouchableOpacity onPress={() => { handleLinks(link) }} >
+                                                                        <Text style={styles.reference_items} key={i} >[{i+1}]</Text>
+                                                                  </TouchableOpacity>
+
+                                                            )
+
+                                                      }
+
+                                                </Text>
+                                          </Text>
+
+
                                     </View>
 
                               ))}
@@ -101,6 +125,17 @@ const styles = StyleSheet.create({
             padding: 10,
             backgroundColor: 'whitesmoke',
             fontSize: 20
+      },
+      group_item: {
+            marginTop: 15,
+            padding: 10,
+            backgroundColor: 'whitesmoke',
+           // fontSize: 20
+      },
+      reference_items: {
+            backgroundColor: '#437BA5',
+            fontSize: 15,
+      
       },
 
 })
