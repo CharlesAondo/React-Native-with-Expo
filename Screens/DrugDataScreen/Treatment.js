@@ -2,9 +2,13 @@
 import React, { Component, useEffect, useState } from 'react';
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { AuthContext } from '../../components/context'
-
 import * as SQLite from "expo-sqlite"
+import { createStackNavigator } from '@react-navigation/stack';
 
+import DosageDetails from './DetailScreens/DosageDetails'
+
+const TreatmentsStack = createStackNavigator();
+const Stack = createStackNavigator();
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
 
@@ -18,7 +22,6 @@ ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
                   });
       });
 });
-
 
 const Treatments = ({ route, navigation, props }) => {
 
@@ -88,7 +91,7 @@ const Treatments = ({ route, navigation, props }) => {
                   db.transaction(
                         tx => {
                               tx.executeSql(
-                                    'SELECT vd.id AS dosage_id, vd.label, vd.dose_min, vd.dose_max, vd.unit, vd.route, vd.duration, vd.interval, vd.administrative_notes, vd.pretreatment_notes, vu.name as unit, vt.* FROM vdi_treatments vt INNER JOIN vdi_dosages vd ON vd.treatment_id = vt.id LEFT OUTER JOIN vdi_units vu ON vu.id = vd.unit WHERE drug_id = ' + drug.id,
+                                    'SELECT vd.id AS dosage_id, vd.label, vd.dose_min, vd.dose_max, vd.route, vd.duration, vd.interval, vd.administrative_notes, vd.pretreatment_notes, vu.name as unit, vt.* FROM vdi_treatments vt INNER JOIN vdi_dosages vd ON vd.treatment_id = vt.id LEFT OUTER JOIN vdi_units vu ON vu.id = vd.unit WHERE drug_id = ' + drug.id,
                                     [],
                                     (_, { rows: { _array } }) => {
                                           setData({
@@ -143,14 +146,9 @@ const Treatments = ({ route, navigation, props }) => {
                               <Text style={styles.indications_header}>INDICATIONS</Text>
 
                               {data.treatment_data.map((item) => (
-                                    <View key={item.dosage_id}>
-                                          <TouchableOpacity onPress={() => navigation.navigate('Details',
-                                                {
-
-                                                      treatment_data: item,
-                                                }
-                                          )}>
-                                                <Text key={item.id + "-" + item.dosage_id} style={styles.indication}>
+                                    <View key={item.id + "-" + item.dosage_id}>
+                                          <TouchableOpacity onPress={() => navigation.navigate('DosageDetails', { dosage_data: item })}>
+                                                <Text key={item.dosage_id} style={styles.indication}>
                                                       <Text style={styles.indication_name}>{item.indication_name}{"\n"}</Text>
                                                       <Text>
                                                             <Text style={styles.indication_dose}>{item.dose_min} {item.dose_max != "null" ? "-" + item.dose_max : ""}</Text>
@@ -168,7 +166,18 @@ const Treatments = ({ route, navigation, props }) => {
             </View>
       )
 }
-export default Treatments;
+//export default Treatments;
+
+const TreatmentsScreen = ({ navigation }) => {
+      return (
+            <Stack.Navigator headerMode="none">
+                  <Stack.Screen name="Treatments" component={Treatments}/>
+                  <Stack.Screen name="DosageDetails" component={DosageDetails}/>
+            </Stack.Navigator>
+      );
+}
+
+export default TreatmentsScreen;
 
 const styles = StyleSheet.create({
       container: {
