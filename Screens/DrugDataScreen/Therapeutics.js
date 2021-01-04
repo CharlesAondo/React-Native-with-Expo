@@ -5,6 +5,8 @@ import { AuthContext } from '../../components/context'
 
 import * as SQLite from "expo-sqlite"
 import { color } from 'react-native-reanimated';
+import * as WebBrowser from 'expo-web-browser';
+
 
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
@@ -27,9 +29,19 @@ const Thereapeutics = ({ route, navigation, props }) => {
 
       const [references, setReferences] = React.useState({
             referencesLinks: '',
-            isPrecautionReferenceLoading: true
+            isPrecautionReferenceLoading: true,
+            links: ''
       })
 
+      const handleLinks = (links) => {
+            let url = '';
+            if (links.pub_med_id === null) {
+                  url = links.url;
+            } else {
+                  url = 'https://pubmed.ncbi.nlm.nih.gov/' + links.pub_med_id;
+            }
+            WebBrowser.openBrowserAsync(url);
+      }
 
       useEffect(() => {
 
@@ -65,6 +77,7 @@ const Thereapeutics = ({ route, navigation, props }) => {
                   {references.isPrecautionReferenceLoading ? <ActivityIndicator /> :
 
                         <ScrollView>
+                           
                               <Text style={styles.header}>INTERACTIONS</Text>
 
                               {drug.interactions.split('\n').map((item, i) =>
@@ -72,8 +85,6 @@ const Thereapeutics = ({ route, navigation, props }) => {
                                     <Text style={styles.item} key={i}>{item}</Text>
 
                               )}
-
-                              <Text style={styles.item}>{drug.interactions}</Text>
 
                               <Text ></Text>
 
@@ -98,13 +109,13 @@ const Thereapeutics = ({ route, navigation, props }) => {
                               <Text style={styles.header}>REFERENCES</Text>
                               {references.referencesLinks.map((item) => (
                                     <View key={item.id}>
-                                          <TouchableOpacity onPress={() => navigation.navigate('Details',
-                                                {
+                                          <TouchableOpacity onPress={() => { handleLinks(item) }} >
+                                                {item.pub_med_id === null ?
+                                                      <Text style={styles.item} >{item.url}</Text>
+                                                      :
+                                                      <Text style={styles.item} >PubMed - {item.pub_med_id}</Text>
 
-                                                      treatment_data: item,
                                                 }
-                                          )}>
-                                                <Text style={styles.item}>{item.pub_med_id}</Text>
                                           </TouchableOpacity>
                                     </View>
 

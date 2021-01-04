@@ -5,8 +5,6 @@ import { AuthContext } from '../../components/context'
 
 import * as SQLite from "expo-sqlite"
 import { color } from 'react-native-reanimated';
-import { WebView } from 'react-native-webview';
-
 
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
@@ -29,9 +27,20 @@ const Precautions = ({ route, navigation, props }) => {
 
       const [references, setReferences] = React.useState({
             referencesLinks: '',
-            isPrecautionReferenceLoading: true
+            isPrecautionReferenceLoading: true,
+            links: ''
       })
 
+
+      const handleLinks = (links) => {
+            let url = '';
+            if (links.pub_med_id === null) {
+                  url = links.url;
+            } else {
+                  url = 'https://pubmed.ncbi.nlm.nih.gov/' + links.pub_med_id;
+            }
+            WebBrowser.openBrowserAsync(url);
+      }
 
       useEffect(() => {
 
@@ -91,17 +100,17 @@ const Precautions = ({ route, navigation, props }) => {
                               )}
 
                               <Text ></Text>
-                              <Text style={styles.contrainIndication_title}>REFERENCES</Text>
+
+                              <Text style={styles.header}>REFERENCES</Text>
                               {references.referencesLinks.map((item) => (
                                     <View key={item.id}>
-                                          <TouchableOpacity onPress={() => navigation.navigate('Details',
-                                                {
+                                          <TouchableOpacity onPress={() => { handleLinks(item) }} >
+                                                {item.pub_med_id === null ?
+                                                      <Text style={styles.item} >{item.url}</Text>
+                                                      :
+                                                      <Text style={styles.item} >PubMed - {item.pub_med_id}</Text>
 
-                                                      treatment_data: item,
                                                 }
-                                          )}>
-                                           
-                                                <Text style={styles.item}>{item.pub_med_id}</Text>
                                           </TouchableOpacity>
                                     </View>
 
