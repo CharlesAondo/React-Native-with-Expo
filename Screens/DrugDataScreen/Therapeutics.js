@@ -50,7 +50,7 @@ const Thereapeutics = ({ route, navigation, props }) => {
                   db.transaction(
                         tx => {
                               tx.executeSql(
-                                    'select * from vdi_precaution_references where drug_id = ' + drug.id,
+                                    'select * from vdi_therapeutic_references where drug_id = ' + drug.id,
                                     [],
                                     (_, { rows: { _array } }) => {
                                           setReferences({
@@ -70,56 +70,62 @@ const Thereapeutics = ({ route, navigation, props }) => {
 
 
       }, [])
-
+      console.log(references.referencesLinks)
       return (
             <View style={styles.container}>
 
                   {references.isPrecautionReferenceLoading ? <ActivityIndicator /> :
 
                         <ScrollView>
-                           
-                              <Text style={styles.header}>INTERACTIONS</Text>
+                              {drug.interactions === null || drug.interactions === "" ?
+                                    null
+                                    :
+                                    <React.Fragment>
+                                          <Text style={styles.header}>Interactions</Text>
+                                          {drug.interactions.split('\n').map((item, i) =>
+                                                <Text style={styles.item} key={i}>{item}</Text>
 
-                              {drug.interactions.split('\n').map((item, i) =>
+                                          )}
+                                    </React.Fragment>
+                              }
 
-                                    <Text style={styles.item} key={i}>{item}</Text>
+                              {drug.reversal_agent === null || drug.reversal_agent === "" ?
+                                    null
+                                    :
+                                    <React.Fragment>
+                                          <Text style={styles.header}>ANTIDOTE/REVERSAL AGENT</Text>
+                                          {drug.reversal_agent.split('\n').map((item, i) =>
+                                                <Text style={styles.item} key={i}>{item}</Text>
 
-                              )}
-
-                              <Text ></Text>
-
-                              <Text style={styles.header}>ANTIDOTE/REVERSAL AGENT</Text>
-
-
-                              {drug.reversal_agent.split('\n').map((item, i) =>
-
-                                    <Text style={styles.item} key={i}>{item}</Text>
-
-                              )}
-                              <Text ></Text>
+                                          )}
+                                    </React.Fragment>
+                              }
 
                               <Text style={styles.header}>AVILABLE FORMULATIONS</Text>
-                              {drug.teratogenicity.split('\n').map((item, i) =>
 
-                                    <Text style={styles.item} key={i}>{item}</Text>
-
-                              )}
 
                               <Text ></Text>
-                              <Text style={styles.header}>REFERENCES</Text>
-                              {references.referencesLinks.map((item) => (
-                                    <View key={item.id}>
-                                          <TouchableOpacity onPress={() => { handleLinks(item) }} >
-                                                {item.pub_med_id === null ?
-                                                      <Text style={styles.item} >{item.url}</Text>
-                                                      :
-                                                      <Text style={styles.item} >PubMed - {item.pub_med_id}</Text>
+                              {references.referencesLinks === undefined || references.referencesLinks == 0 ?
+                                    null
+                                    :
+                                    <React.Fragment>
+                                          <Text style={styles.header}>REFERENCES</Text>
+                                          {references.referencesLinks.map((item) => (
+                                                <View key={item.id}>
+                                                      <TouchableOpacity onPress={() => { handleLinks(item) }} >
+                                                            {item.pub_med_id === null ?
+                                                                  <Text style={styles.item} >{item.url}</Text>
+                                                                  :
+                                                                  <Text style={styles.item} >PubMed - {item.pub_med_id}</Text>
 
-                                                }
-                                          </TouchableOpacity>
-                                    </View>
+                                                            }
+                                                      </TouchableOpacity>
+                                                </View>
 
-                              ))}
+                                          ))}
+                                    </React.Fragment>
+
+                              }
 
                         </ScrollView>
                   }

@@ -1,10 +1,11 @@
 
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useEffect, useState, Fragment } from 'react';
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, ListView } from 'react-native'
 import { AuthContext } from '../../components/context'
 
 import * as SQLite from "expo-sqlite"
 import { color } from 'react-native-reanimated';
+import * as WebBrowser from 'expo-web-browser';
 
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
@@ -69,57 +70,74 @@ const Precautions = ({ route, navigation, props }) => {
 
 
       }, [])
-
+      console.log(drug)
       return (
             <View style={styles.container}>
 
                   {references.isPrecautionReferenceLoading ? <ActivityIndicator /> :
 
                         <ScrollView>
-                              <Text style={styles.header}>CONTRAINDICATIONS</Text>
+                              {drug.contraindications === null || drug.contraindications === "" ?
+                                    null
+                                    :
+                                    <React.Fragment>
+                                          <Text style={styles.header}>CONTRAINDICATIONS</Text>
+                                          {drug.contraindications.split('\n').map((item, i) =>
+                                                <Text style={styles.item} key={i}>{item}</Text>
 
-                              <Text style={styles.item}>{drug.contraindications}</Text>
+                                          )}
+                                    </React.Fragment>
+                              }
 
-                              <Text ></Text>
+                              {drug.adverse_effects === null || drug.adverse_effects === "" ?
+                                    null
+                                    :
+                                    <React.Fragment>
+                                          <Text style={styles.header}>ADVERSE EFFECTS</Text>
+                                          {drug.adverse_effects.split('\n').map((item, i) =>
+                                                <Text style={styles.item} key={i}>{item}</Text>
 
-                              <Text style={styles.header}>ADVERSE EFFECTS</Text>
+                                          )}
+                                    </React.Fragment>
+                              }
 
+                              {drug.teratogenicity === null || drug.teratogenicity === "" ?
+                                    null
+                                    :
+                                    <React.Fragment>
+                                          <Text style={styles.header}>TERATOGENICITY/PREGNANCY/LACTATIONS</Text>
+                                          {drug.teratogenicity.split('\n').map((item, i) =>
+                                                <Text style={styles.item} key={i}>{item}</Text>
 
-                              {drug.adverse_effects.split('\n').map((item, i) =>
+                                          )}
+                                    </React.Fragment>
+                              }
+                              {references.referencesLinks === undefined || references.referencesLinks == 0 ?
+                                    null
+                                    :
+                                    < React.Fragment >
+                                          <Text style={styles.header}>REFERENCES</Text>
+                                          {references.referencesLinks.map((item) => (
+                                                <View key={item.id}>
+                                                      <TouchableOpacity onPress={() => { handleLinks(item) }} >
+                                                            {item.pub_med_id === null ?
+                                                                  <Text style={styles.item} >{item.url}</Text>
+                                                                  :
+                                                                  <Text style={styles.item} >PubMed - {item.pub_med_id}</Text>
 
-                                    <Text style={styles.item} key={i}>{item}</Text>
+                                                            }
+                                                      </TouchableOpacity>
+                                                </View>
 
-                              )}
-                              <Text ></Text>
+                                          ))}
 
-                              <Text style={styles.header}>TERATOGENICITY/PREGNANCY/LACTATIONS</Text>
-                              {drug.teratogenicity.split('\n').map((item, i) =>
-
-                                    <Text style={styles.item} key={i}>{item}</Text>
-
-                              )}
-
-                              <Text ></Text>
-
-                              <Text style={styles.header}>REFERENCES</Text>
-                              {references.referencesLinks.map((item) => (
-                                    <View key={item.id}>
-                                          <TouchableOpacity onPress={() => { handleLinks(item) }} >
-                                                {item.pub_med_id === null ?
-                                                      <Text style={styles.item} >{item.url}</Text>
-                                                      :
-                                                      <Text style={styles.item} >PubMed - {item.pub_med_id}</Text>
-
-                                                }
-                                          </TouchableOpacity>
-                                    </View>
-
-                              ))}
+                                    </React.Fragment>
+                              }
 
                         </ScrollView>
                   }
 
-            </View>
+            </View >
       )
 
 }
@@ -133,7 +151,7 @@ const styles = StyleSheet.create({
             paddingHorizontal: 5
       },
       item: {
-            marginTop: 0,
+            marginTop: 3,
             padding: 10,
             backgroundColor: 'whitesmoke',
             fontSize: 20,

@@ -8811,9 +8811,9 @@ const insertDrugsToDatabaseAsync = async () => {
                   + "','"
                   + (drugs[i].reversal_agent == null ? null : drugs[i].reversal_agent.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
-                  + (drugs[i].teratogenicity == null ? null : drugs[i].teratogenicity.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
-                  + "','"
                   + (drugs[i].contraindications == null ? null : drugs[i].contraindications.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
+                  + "','"
+                  + (drugs[i].teratogenicity == null ? null : drugs[i].teratogenicity.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"
                   + (drugs[i].interactions == null ? null : drugs[i].interactions.replace(/[`~!@#$^_?'"\\]/gi, '\\'))
                   + "','"

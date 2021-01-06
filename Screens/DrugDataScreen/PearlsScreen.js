@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
             paddingHorizontal: 20
       },
       item: {
-            marginTop: 15,
+            marginTop: 5,
             padding: 10,
             backgroundColor: 'whitesmoke',
             fontSize: 20
