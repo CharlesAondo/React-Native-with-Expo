@@ -25,7 +25,7 @@ const useDatabase = () => {
       useEffect(() => {
             async function loadDataAsync() {
                   try {
-/*
+
                         // await database.dropDatabaseTablesAsync();
                         await database.setupCreateTablesAsync();
 
@@ -48,7 +48,7 @@ const useDatabase = () => {
                         await formulations.insertFormulationsAsync();
                         await soundalikes.insertSoundAlikesAsync();
                         await formulationSpecie.insertFormulationSpecieAsync();
-*/
+
 
                         setDBLoadingComplete(true);
                   } catch (e) {
