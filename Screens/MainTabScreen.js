@@ -87,7 +87,7 @@ const HomeScreenstack = ({ navigation }) => {
 
       return (
             <View style={styles.container}>
-                  {isLoading ? <ActivityIndicator /> :
+                  {isLoading ? <ActivityIndicator  size="large" color="green" /> :
                         <React.Fragment>
                               <Header />
                               <ScrollView>
