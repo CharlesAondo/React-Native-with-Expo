@@ -21,7 +21,6 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { AuthContext } from '../../components/context';
-import Users from '../../model/Users';
 import {database} from '../../database/database';
 
 import * as SQLite from "expo-sqlite"
@@ -35,7 +34,7 @@ const SignInScreen = ({ navigation }) => {
       db.transaction(
             tx => {
               tx.executeSql(
-                'select * from vdi_drugs where id = 1',
+                'select * from vdi_therapeutic_references where drug_id = 76',
                 [],
                 (_, { rows: { _array } }) => {
                  console.log("vdi_routes",_array)

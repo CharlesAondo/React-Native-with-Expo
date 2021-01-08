@@ -15,14 +15,17 @@ import { precaution_references } from '../database/precaution_references';
 import { insertUnits } from '../database/insertUnits';
 import { insertDosages } from '../database/insertDosages';
 import {therapeutic_references} from '../database/therapeutic_reference';
-
+import {formats} from '../database/formats';
+import {formulations} from '../database/formulations';
+import {soundalikes} from '../database/soundalikes';
+import {formulationSpecie} from '../database/formulationSpecie'
 const useDatabase = () => {
       const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
 
       useEffect(() => {
             async function loadDataAsync() {
                   try {
-
+/*
                         // await database.dropDatabaseTablesAsync();
                         await database.setupCreateTablesAsync();
 
@@ -41,9 +44,11 @@ const useDatabase = () => {
                         await insertUnits.insertUnitsAsync();
                         await insertDosages.insertDosagesAsync();
                         await  therapeutic_references.insertTherapeuticReferencesAsync();
-
-
-
+                        await formats.insertFormatsAsync();
+                        await formulations.insertFormulationsAsync();
+                        await soundalikes.insertSoundAlikesAsync();
+                        await formulationSpecie.insertFormulationSpecieAsync();
+*/
 
                         setDBLoadingComplete(true);
                   } catch (e) {

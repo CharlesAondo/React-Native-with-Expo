@@ -115,7 +115,7 @@ const Treatments = ({ route, navigation, props }) => {
       return (
             <View style={styles.container}>
 
-                  {data.isLoading || cateData.loadingCategory || brandsData.loadingBrands || data.isLoading.isLoading? <ActivityIndicator /> :
+                  {data.isLoading || cateData.loadingCategory || brandsData.loadingBrands || data.isLoading.isLoading? <ActivityIndicator color="green" size= "large"/> :
 
                         <ScrollView>
                               {cateData.categories.map((item) => (

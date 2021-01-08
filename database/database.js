@@ -72,7 +72,8 @@ const setupCreateTablesAsync = async () => {
 
 
 
-      let drugsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drugs (id INTEGER PRIMARY KEY AUTOINCREMENT,guid varchar(25),name varchar(255),formulation_species_id INTEGER(10),notes string,target_serum_levels string,reversal_agent string,teratogenicity string,contraindications string,interactions string,adverse_effects string,deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);      console.log("Charles Creating VDI Drugs! Table...........", drugsTable);
+      let drugsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drugs (id INTEGER PRIMARY KEY AUTOINCREMENT,guid varchar(25),name varchar(255),formulation_species_id INTEGER(10),notes string,target_serum_levels string,reversal_agent string,teratogenicity string,contraindications string,interactions string,adverse_effects string,deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);    
+      console.log("Charles Creating VDI Drugs! Table...........", drugsTable);
       console.log('....................................................................');
 
       let brandsTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_brands (id INTEGER PRIMARY KEY AUTOINCREMENT,name varchar(255),vdi_is_human_ca_brand INTEGER(10),vdi_is_human_uk_brand INTEGER(10),vdi_is_human_us_brand INTEGER(10),vdi_is_vet_ca_brand INTEGER(10),vdi_is_vet_us_brand INTEGER(10),vdi_is_vet_uk_brand INTEGER(10),vdi_is_other_countries INTEGER(10),deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
@@ -130,6 +131,22 @@ const setupCreateTablesAsync = async () => {
       console.log("Charles Creating VDI  Therapeutic References! Table...........", therapeuticReferences);
       console.log('....................................................................');
 
+      let drugFormulationTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drug_forms (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTERGER(10),available_drug_form_id INTERGER,target  text,concentrations text,unit_id INTERGER,notes text,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,FOREIGN KEY (drug_id) REFERENCES vdi_drugs(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating vdi_drug_forms! Table...........", drugFormulationTable);
+      console.log('....................................................................');
+
+
+      let soundAlkies = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_soundalikes (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTERGER(10),word varchar(255),notes text,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,FOREIGN KEY (drug_id) REFERENCES vdi_drugs(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating vdi soundalikes! Table...........", soundAlkies);
+      console.log('....................................................................');
+
+
+      let formulationSpecieTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_formulation_specie(id INTEGER PRIMARY KEY AUTOINCREMENT, specie VARCHAR(50), created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);
+      console.log("Charles Creating Formulation Specie! Table...........", formulationSpecieTable);
+      console.log('....................................................................');
+
+      
+
 
 }
 const insertCalculator = async () => {
@@ -180,10 +197,24 @@ const insertAnimalTypes = async () => {
             [
                   {
                         "id": 1,
+                        "name": "DOG",
+                        "created_at": "2020-05-06T15:44:54.000000Z",
+                        "updated_at": "2020-05-06T15:44:54.000000Z"
+                  },
+                  {
+                        "id": 2,
                         "name": "CAT",
                         "created_at": "2020-05-06T15:44:54.000000Z",
                         "updated_at": "2020-05-06T15:44:54.000000Z"
                   },
+                  {
+                        "id": 3,
+                        "name": "DOG/CAT",
+                        "created_at": "2020-05-06T15:44:54.000000Z",
+                        "updated_at": "2020-05-06T15:44:54.000000Z"
+                  },
+
+
 
             ];
       for (let i = 0; i < calculators.length; ++i) {

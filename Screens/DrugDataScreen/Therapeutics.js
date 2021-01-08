@@ -26,11 +26,27 @@ ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
 const Thereapeutics = ({ route, navigation, props }) => {
 
       const drug = React.useContext(AuthContext);
+      const specieName = '';
 
       const [references, setReferences] = React.useState({
             referencesLinks: '',
             isPrecautionReferenceLoading: true,
             links: ''
+      })
+
+      const [formulations, setFormulations] = React.useState({
+            formulationData: '',
+            loadingFormats: true
+      })
+
+      const [formulationSpecie, setFormulationSpecie] = React.useState({
+            specie: '',
+            isSpecieLoading: true
+      })
+
+      const [soundAlikes, setSoundAlikes] = React.useState({
+            soundalikesData: '',
+            isSoundAlikesLoading: true
       })
 
       const handleLinks = (links) => {
@@ -63,21 +79,106 @@ const Thereapeutics = ({ route, navigation, props }) => {
                               );
                         },
                   );
+            }
+
+            const getFormulatios = () => {
+                  db.transaction(
+                        tx => {
+                              tx.executeSql(
+                                    'select vdf.concentrations,vdf.notes,vdaf.name,vu.name as unit from vdi_drug_forms vdf inner join vdi_available_drug_forms vdaf on vdf.available_drug_form_id = vdaf.id inner join vdi_units vu on vu.id= vdf.unit_id where vdf.drug_id = ' + drug.id,
+                                    [],
+                                    (_, { rows: { _array } }) => {
+                                          setFormulations({
+                                                ...formulations,
+                                                formulationData: _array,
+                                                loadingFormats: false
+                                          })
+
+                                    }
+                              );
+                        },
+                  );
 
             }
 
-            getData()
+            const getFormulationSpecie = () => {
+                  db.transaction(
+                        tx => {
+                              tx.executeSql(
+                                    'select specie from vdi_formulation_specie where id = ' + drug.formulation_species_id,
+                                    [],
+                                    (_, { rows: { _array } }) => {
+                                         _array.map((item)=>{
+                                          setFormulationSpecie({
+                                                ...formulationSpecie,
+                                                specie: item.specie,
+                                                isSpecieLoading: false
+                                          })
+                                         })
 
+                                    }
+
+                              );
+                        },
+                  );
+
+            }
+
+            const getSoundalikes = () => {
+                  db.transaction(
+                        tx => {
+                              tx.executeSql(
+                                    'select * from vdi_soundalikes where drug_id = ' + drug.id,
+                                    [],
+                                    (_, { rows: { _array } }) => {
+                                          setSoundAlikes({
+                                                ...soundAlikes,
+                                                soundalikesData: _array,
+                                                isSoundAlikesLoading: false
+                                          })
+
+                                    }
+                              );
+                        },
+                  );
+
+            }
+
+
+            getData()
+            getFormulatios()
+            getFormulationSpecie()
+            getSoundalikes()
 
       }, [])
-      console.log(references.referencesLinks)
+
+      console.log('specie', formulationSpecie.specie)
       return (
             <View style={styles.container}>
 
-                  {references.isPrecautionReferenceLoading ? <ActivityIndicator /> :
+                  {references.isPrecautionReferenceLoading || formulations.loadingFormats || soundAlikes.isSoundAlikesLoading || formulationSpecie.isSpecieLoading ? <ActivityIndicator size="large" color="green" /> :
 
                         <ScrollView>
-                              {drug.interactions === null || drug.interactions === "" ?
+
+                              {soundAlikes.soundalikesData == "" || soundAlikes.soundalikesData === null ?
+                                    null
+                                    :
+                                    <React.Fragment>
+                                          <Text style={styles.header}>Sound Alike</Text>
+                                          {soundAlikes.soundalikesData.map((item) => (
+                                                <View key={item.id}>
+                                                      <Text style={styles.item}>
+                                                            <Text style={styles.format}>{item.word}</Text>
+                                                            <Text> {item.notes != "" ? "-" + " " + item.notes : ""} </Text>
+                                                      </Text>
+                                                </View>
+
+                                          ))}
+                                    </React.Fragment>
+
+                              }
+
+                              {drug.interactions === null || drug.interactions == "" || drug.interactions === undefined ?
                                     null
                                     :
                                     <React.Fragment>
@@ -89,7 +190,7 @@ const Thereapeutics = ({ route, navigation, props }) => {
                                     </React.Fragment>
                               }
 
-                              {drug.reversal_agent === null || drug.reversal_agent === "" ?
+                              {drug.reversal_agent === null || drug.reversal_agent == "" ?
                                     null
                                     :
                                     <React.Fragment>
@@ -101,10 +202,27 @@ const Thereapeutics = ({ route, navigation, props }) => {
                                     </React.Fragment>
                               }
 
-                              <Text style={styles.header}>AVILABLE FORMULATIONS</Text>
 
+                              {formulations.formulationData == "" || formulations.formulationData === null ?
+                                    null
 
-                              <Text ></Text>
+                                    :
+                                    <React.Fragment>
+                                          <Text style={styles.header}>AVILABLE FORMULATIONS({formulationSpecie.specie.toUpperCase()})</Text>
+                                          {formulations.formulationData.map((item) => (
+                                                <View key={item.id}>
+                                                      <Text style={styles.item}>
+                                                            <Text style={styles.format}>{item.name}{"\n"}</Text>
+                                                            <Text >{item.concentrations} {item.unit}{item.notes != "" ? "." + " " + item.notes : ""} </Text>
+
+                                                      </Text>
+                                                </View>
+
+                                          ))}
+                                    </React.Fragment>
+
+                              }
+
                               {references.referencesLinks === undefined || references.referencesLinks == 0 ?
                                     null
                                     :
@@ -144,6 +262,7 @@ const styles = StyleSheet.create({
             paddingHorizontal: 5
       },
       item: {
+            marginTop: 3,
             padding: 10,
             backgroundColor: 'whitesmoke',
             fontSize: 20,
@@ -184,6 +303,9 @@ const styles = StyleSheet.create({
             color: "#20232a",
             textAlign: "center",
             fontSize: 15,
+            fontWeight: "bold"
+      },
+      format: {
             fontWeight: "bold"
       }
 
