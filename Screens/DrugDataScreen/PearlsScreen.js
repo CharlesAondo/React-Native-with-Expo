@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
             paddingHorizontal: 20
       },
       item: {
-            marginTop: 5,
+            marginTop: 15,
             padding: 10,
             backgroundColor: 'whitesmoke',
             fontSize: 20
@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
             marginTop: 15,
             padding: 10,
             backgroundColor: 'whitesmoke',
-           // fontSize: 20
       },
       reference_items: {
             backgroundColor: '#437BA5',

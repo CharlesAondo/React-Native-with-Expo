@@ -70,7 +70,7 @@ const Precautions = ({ route, navigation, props }) => {
 
 
       }, [])
-      console.log(drug)
+   
       return (
             <View style={styles.container}>
 
