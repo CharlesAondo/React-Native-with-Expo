@@ -1,17 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
       StyleSheet, Text, View, ScrollView,
-      TextInput, FlatList, ActivityIndicator, TouchableOpacity, TouchableHighlight, Easing,
+      TextInput, FlatList, ActivityIndicator, TouchableOpacity, TouchableHighlight, Easing, ListRenderItem,
       Animated
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import MiniCard from '../components/MiniCard'
 import Constant from 'expo-constants'
-import { useTheme } from '@react-navigation/native'
-const { Value, timing } = Animated
+import { useTheme, CommonActions } from '@react-navigation/native'
+import { SafeAreaView } from 'react-native-safe-area-context';
+const { Value, timing } = Animated;
+import _ from "lodash";
 
-//https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=songs&type=video&key=AIzaSyDtCWCduSedfthvh
+import * as SQLite from "expo-sqlite"
+import { drugCategoryDrug } from '../database/drugCategoryDrug';
+import { getUsers } from '../hooks/getUsers';
+
+const db = SQLite.openDatabase('db.db')
 
 const SearchScreen = ({ navigation }) => {
 
@@ -27,56 +33,110 @@ const SearchScreen = ({ navigation }) => {
             }).start();
       };
 
-      const [value, setValue] = useState("")
-      // const [miniCardData,setMiniCard] = useState([])
-      //const dispatch = useDispatch()
 
-      const [loading, setLoading] = useState(false)
-/*       const fetchData = () => {
-            setLoading(true)
-            fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${value}&type=video&key=AIzaSyDtCWCduSedfthvh`)
-                  .then(res => res.json())
-                  .then(data => {
 
-                        setLoading(false)
-                        dispatch({ type: "add", payload: data.items })
-                        //setMiniCard(data.items)
-                  })
-      } */
+      const [data, setData] = React.useState({
+            drugs: [],
+            loading: false,
+            tempDrugs: [],
+            query: '',
+      })
+      const getDrugs = () => {
+            db.transaction(
+                  tx => {
+                        tx.executeSql(
+                              'SELECT vd.id,vd.name, GROUP_CONCAT(DISTINCT(vb.name)) brandNames FROM vdi_drugs vd LEFT JOIN vdi_brand_drug vbd ON vbd.drug_id = vd.id JOIN vdi_brands vb on vb.id=vbd.brand_id  GROUP BY vd.id lIMIT 20',
+                              [],
+                              (_, { rows: { _array } }) => {
+
+                                    setData({
+                                          ...data,
+                                          drugs: _array,
+                                          tempDrugs: _array,
+                                          loading: true
+                                    });
+                              }
+                        );
+                  },
+            );
+      }
+     
+      useEffect(() => {
+            getDrugs()
+      }, [])
+      //console.log(data.tempDrugs)
+
+      const contains = (name, query) => {
+         console.log('data passing',name.id)
+            //return false;
+      };
+
+
+      const handleSearch = (text) => {
+
+            let formatQuery = text.toString().toLowerCase();
+            const searchResult = _.filter(data.tempDrugs, name => {
+                  return contains(name, formatQuery)
+            });
+
+            setData({
+                  ...data,
+                  query: formatQuery,
+                  drugs: searchResult
+
+            })
+      }
+
+
+      const Item = ({ name, brand }) => (
+            <View style={styles.listItems}>
+                  <Text style={styles.listNames}>{name}</Text>
+                  <Text style={styles.listBrands}>{brand}</Text>
+
+            </View>
+      );
+      const renderItem = ({ item }) => <Item name={item.name} brand={item.brandNames} />;
+
+      // console.log(data.drugs)
       return (
-            <View style={styles.outter_header}>
-                  <View style={styles.inner_header}>
-                        <Animated.View >
-                              <TouchableHighlight
-                                    activeOpacity={1}
-                                    underlayColor={"#ccd0d5"}
-                                    onPress={() => navigation.goBack() || animate()}
-                                    style={styles.back_icon_box}
-                              >
-                                    <Entypo name="chevron-left" size={22} color="#000000" />
-                              </TouchableHighlight>
-                        </Animated.View>
+            <View>
+                  <SafeAreaView >
+                        <View style={styles.inner_header}>
+                              <Animated.View >
+                                    <TouchableHighlight
+                                          activeOpacity={1}
+                                          underlayColor={"#ccd0d5"}
+                                          onPress={() => navigation.goBack() || animate()}
+                                          style={styles.back_icon_box}
+                                    >
+                                          <Entypo name="chevron-left" size={22} color="#000000" />
+                                    </TouchableHighlight>
+                              </Animated.View>
 
-                        <TextInput
-                              placeholder="Search drug by name or brand"
-                              clearButtonMode="always"
-                            //  value={this.state.keyword}
-                            //  onChangeText={(value) => this.setState({ keyword: value })}
-                              style={styles.input}
-                        />
-                  </View>
-                  {loading ? <ActivityIndicator style={{ marginTop: 10 }} size="large" color="red" /> : null}
-                  <FlatList
-                  /* data={miniCardData}
-                  renderItem={({item})=>{
-                      return <MiniCard
-                       videoId={item.id.videoId}
-                       title={item.snippet.title}
-                       channel={item.snippet.channelTitle}
-                      />
-                  }}
-                  keyExtractor={item=>item.id.videoId} */
-                  />
+                              <TextInput
+                                    placeholder="Search drug by name,brand or indication"
+                                    clearButtonMode="always"
+                                    //  value={this.state.keyword}
+                                    onChangeText={handleSearch}
+                                    style={styles.input}
+                              />
+                        </View>
+                        {data.loading != true ? <ActivityIndicator style={{ marginTop: 10 }} size="large" color="red" /> :
+
+
+
+                              <FlatList
+
+                                    data={data.drugs}
+                                    renderItem={renderItem}
+                                    keyExtractor={item => item.id}
+
+
+                              />
+
+                        }
+
+                  </SafeAreaView>
 
             </View>
       )
@@ -112,5 +172,27 @@ const styles = StyleSheet.create({
             borderRadius: 16,
             paddingHorizontal: 16,
             fontSize: 15
-          },
+      },
+      listItems: {
+            backgroundColor: '#ddd',
+            flexDirection: "column",
+            marginVertical: 5,
+            padding: 10
+
+
+      },
+      listNames: {
+            flex: 0.5,
+            alignItems: 'flex-start',
+            fontWeight: 'bold'
+      },
+      listBrands: {
+            flex: 0.5,
+            alignItems: 'flex-end',
+            fontStyle: 'italic'
+
+      },
+      title: {
+            fontSize: 32,
+      },
 })

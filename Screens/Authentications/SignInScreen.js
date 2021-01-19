@@ -34,8 +34,8 @@ const SignInScreen = ({ navigation }) => {
       db.transaction(
             tx => {
               tx.executeSql(
-                'select * from vdi_therapeutic_references where drug_id = 76',
-                [],
+                  'SELECT vd.id,vd.name, GROUP_CONCAT(DISTINCT(vb.name)) brandNames FROM vdi_drugs vd LEFT JOIN vdi_brand_drug vbd ON vbd.drug_id = vd.id JOIN vdi_brands vb on vb.id=vbd.brand_id WHERE vd.id = 45  GROUP BY vd.id',
+                  [],
                 (_, { rows: { _array } }) => {
                  console.log("vdi_routes",_array)
                 }
