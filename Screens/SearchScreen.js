@@ -15,7 +15,6 @@ import _ from "lodash";
 import DetailsScreen, {DetailScreen} from './DetailsScreen';
 import * as SQLite from "expo-sqlite"
 import { drugCategoryDrug } from '../database/drugCategoryDrug';
-import { getUsers } from '../hooks/getUsers';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 const Stack = createStackNavigator();
