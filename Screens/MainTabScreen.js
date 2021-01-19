@@ -32,38 +32,7 @@ const HomeScreenstack = ({ navigation }) => {
 
       const [isLoading, setLoading] = useState(true);
       const [drugs, setDrugs] = useState({})
-      /*
-            let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/drugs";
-            let h = new Headers();
-            h.append('Accept', 'application/json');
-            h.append('Content-Type', 'application/json');
-      
-            let credentials = base64.encode('23afgddd:datahasgon')
-            let auth = ' Basic ' + credentials;
-      
-      
-            h.append('Authorization', auth)
-      
-            let req = new Request(uri, {
-                  method: "GET",
-                  headers: h,
-                  credentials: 'include',
-      
-            });
-            useEffect(() => {
-                  const fetchDrugs = () =>
-                        fetch(req)
-                              .then(res => res.json())
-                              .then(data => {
-                                    if (data.name == lastDrug) return fetchDrugs()
-                                    else
-                                          setDrugs(data)
-                                    setLoading(false)
-                              })
-                  fetchDrugs()
-            }, [lastDrug])
-            
-      */
+
       useEffect(() => {
             const getDrugs = () => {
                   db.transaction(
@@ -73,7 +42,6 @@ const HomeScreenstack = ({ navigation }) => {
                                     [],
                                     (_, { rows: { _array } }) => {
 
-                                       //   console.log("vdi_drugs", _array)
                                           setDrugs(_array)
                                           setLoading(false)
                                     }

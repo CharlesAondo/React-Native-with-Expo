@@ -12,14 +12,18 @@ import { useTheme, CommonActions } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 const { Value, timing } = Animated;
 import _ from "lodash";
-
+import DetailsScreen, {DetailScreen} from './DetailsScreen';
 import * as SQLite from "expo-sqlite"
 import { drugCategoryDrug } from '../database/drugCategoryDrug';
 import { getUsers } from '../hooks/getUsers';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+const Stack = createStackNavigator();
+
 
 const db = SQLite.openDatabase('db.db')
 
-const SearchScreen = ({ navigation }) => {
+const SearchScreenStack = ({ navigation }) => {
 
       let opacity = new Animated.Value(0);
 
@@ -40,12 +44,13 @@ const SearchScreen = ({ navigation }) => {
             loading: false,
             tempDrugs: [],
             query: '',
+            arrayholder: []
       })
       const getDrugs = () => {
             db.transaction(
                   tx => {
                         tx.executeSql(
-                              'SELECT vd.id,vd.name, GROUP_CONCAT(DISTINCT(vb.name)) brandNames FROM vdi_drugs vd LEFT JOIN vdi_brand_drug vbd ON vbd.drug_id = vd.id JOIN vdi_brands vb on vb.id=vbd.brand_id  GROUP BY vd.id lIMIT 20',
+                              'SELECT vd.*, GROUP_CONCAT(DISTINCT(vb.name)) brandNames, GROUP_CONCAT(DISTINCT(vt.indication_name)) indicationNames FROM vdi_drugs vd LEFT JOIN vdi_brand_drug vbd ON vbd.drug_id = vd.id JOIN vdi_brands vb on vb.id=vbd.brand_id LEFT JOIN vdi_treatments vt ON vt.drug_id=vd.id GROUP BY vd.id',
                               [],
                               (_, { rows: { _array } }) => {
 
@@ -60,42 +65,47 @@ const SearchScreen = ({ navigation }) => {
                   },
             );
       }
-     
+
       useEffect(() => {
             getDrugs()
       }, [])
-      //console.log(data.tempDrugs)
+      console.log(data.drugs)
 
-      const contains = (name, query) => {
-         console.log('data passing',name.id)
-            //return false;
-      };
+      const searchFilterFunction = text => {
+            const newData = data.tempDrugs.filter(item => {
+                  const itemData = `${item.name.toUpperCase()}   
+                  ${item.brandNames.toUpperCase()}
+                  
+                  ${item.indicationNames === null || item.indicationNames === "" ? null : item.indicationNames.toUpperCase()}`;
 
+                  const textData = text.toUpperCase();
 
-      const handleSearch = (text) => {
-
-            let formatQuery = text.toString().toLowerCase();
-            const searchResult = _.filter(data.tempDrugs, name => {
-                  return contains(name, formatQuery)
+                  return itemData.indexOf(textData) > -1;
             });
 
             setData({
                   ...data,
-                  query: formatQuery,
-                  drugs: searchResult
+                  drugs: newData,
+            });
+      };
 
-            })
-      }
-
-
-      const Item = ({ name, brand }) => (
+      const Item = ({ name, brand, indications,item }) => (
             <View style={styles.listItems}>
-                  <Text style={styles.listNames}>{name}</Text>
-                  <Text style={styles.listBrands}>{brand}</Text>
+                  <TouchableOpacity onPress={() => navigation.navigate('Details',{drug: item
+
+                  })}> 
+                        <Text style={styles.listNames}>{name}</Text>
+                        <Text style={styles.listSecondItem}>
+                              <Text style={styles.brands}>{brand}{'\n'}</Text>
+                              <Text style={styles.indications}>{indications}</Text>
+                        </Text>
+
+                  </TouchableOpacity>
+
 
             </View>
       );
-      const renderItem = ({ item }) => <Item name={item.name} brand={item.brandNames} />;
+      const renderItem = ({ item }) => <Item name={item.name} brand={item.brandNames} indications={item.indicationNames} item={item}/>;
 
       // console.log(data.drugs)
       return (
@@ -117,24 +127,22 @@ const SearchScreen = ({ navigation }) => {
                                     placeholder="Search drug by name,brand or indication"
                                     clearButtonMode="always"
                                     //  value={this.state.keyword}
-                                    onChangeText={handleSearch}
+                                    onChangeText={text => searchFilterFunction(text)}
                                     style={styles.input}
                               />
                         </View>
-                        {data.loading != true ? <ActivityIndicator style={{ marginTop: 10 }} size="large" color="red" /> :
 
 
+                        <FlatList
 
-                              <FlatList
-
-                                    data={data.drugs}
-                                    renderItem={renderItem}
-                                    keyExtractor={item => item.id}
+                              data={data.drugs}
+                              renderItem={renderItem}
+                              keyExtractor={item => item.id}
 
 
-                              />
+                        />
 
-                        }
+
 
                   </SafeAreaView>
 
@@ -142,7 +150,17 @@ const SearchScreen = ({ navigation }) => {
       )
 }
 
+const SearchScreen = ({ navigation }) => {
+
+      return (
+            <Stack.Navigator headerMode="none">
+                  <Stack.Screen name="SearchScreen" component={SearchScreenStack} />
+                  <Stack.Screen name="Details" component={DetailsScreen}/>
+            </Stack.Navigator>
+      );
+}
 export default SearchScreen;
+
 const styles = StyleSheet.create({
       outter_header: {
             flex: 1,
@@ -186,10 +204,18 @@ const styles = StyleSheet.create({
             alignItems: 'flex-start',
             fontWeight: 'bold'
       },
-      listBrands: {
+      listSecondItem: {
             flex: 0.5,
             alignItems: 'flex-end',
+
+      },
+      brands: {
             fontStyle: 'italic'
+
+      },
+      indications: {
+            fontWeight: 'bold',
+            color: 'green'
 
       },
       title: {

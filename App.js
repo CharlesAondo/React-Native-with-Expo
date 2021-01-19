@@ -24,7 +24,7 @@ import { DrawerContent } from './Screens/DrawerContent';
 
 import MainTabScreen from './Screens/MainTabScreen';
 import RootStackScreen from './Screens/RootStackScreen';
-import SupportScreen from './Screens/SupportScreen';
+import SearchScreen from './Screens/SearchScreen';
 import SettingsScreen from './Screens/SettingsScreen';
 import BookmarkScreen from './Screens/BookmarkScreen';
 import { AsyncStorage } from 'react-native';
@@ -154,7 +154,7 @@ const App = () => {
                                     <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
                                     <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
                                     <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
-                                    <Drawer.Screen name="SupportScreen" component={SupportScreen} />
+                                    <Drawer.Screen name="SearchScreen" component={SearchScreen} />
                               </Drawer.Navigator>
                         )
                               :
