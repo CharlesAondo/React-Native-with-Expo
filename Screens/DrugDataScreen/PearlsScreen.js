@@ -30,12 +30,15 @@ const PearlsScreen = ({ route, navigation, props }) => {
       const [pearls, setPearl] = React.useState({
             pearl_data: '',
             isPearlLoading: true,
-            links :''
+            links: '',
+            urlLink:2,
+            pubMedLink:1
       })
-      const handleLinks = (links) => {
-            let url = '';
-            if (isNaN(links)) {
-                  url = links.url;
+      const handleLinks = (links,source) => {
+         
+           let url = '';
+            if (source ===2) {
+                  url = links;
             } else {
                   url = 'https://pubmed.ncbi.nlm.nih.gov/' + links;
             }
@@ -49,7 +52,7 @@ const PearlsScreen = ({ route, navigation, props }) => {
                   db.transaction(
                         tx => {
                               tx.executeSql(
-                                    'SELECT vp.*, GROUP_CONCAT(COALESCE(vpr.pub_med_id, vpr.url)) medids FROM vdi_pearls vp LEFT OUTER JOIN vdi_pearl_references vpr ON vpr.pearl_id = vp.id WHERE drug_id = ' + drug.id + ' GROUP BY vp.id',
+                                    'SELECT vp.*, GROUP_CONCAT(vpr.pub_med_id) medids,GROUP_CONCAT(vpr.url) urls FROM vdi_pearls vp LEFT OUTER JOIN vdi_pearl_references vpr ON vpr.pearl_id = vp.id WHERE drug_id = ' + drug.id + ' GROUP BY vp.id',
                                     [],
                                     (_, { rows: { _array } }) => {
                                           setPearl({
@@ -69,7 +72,9 @@ const PearlsScreen = ({ route, navigation, props }) => {
 
 
       }, [])
-      console.log(pearls.pearl_data);
+      console.log('....................................................................');
+
+      console.log('NEW DATA..',pearls.pearl_data);
       return (
             <View style={styles.container}>
 
@@ -80,20 +85,30 @@ const PearlsScreen = ({ route, navigation, props }) => {
                                     <View key={item.id}>
                                           <Text style={styles.group_item}>
                                                 <Text style={styles.item}>{item.notes} </Text>
-
                                                 <Text>
-                                                      {item.medids === null ?
+                                                      {item.medids === null || item.medids === "null" || item.medids.includes("null")?
                                                             <Text></Text>
                                                             :
-                                                           
-                                                            item.medids.split(',').map((link, i) =>
 
-                                                                  <TouchableOpacity onPress={() => { handleLinks(link) }} >
+                                                            item.medids.split(',').map((link, i) =>
+                                                            
+                                                                  <TouchableOpacity onPress={() => { handleLinks(link,pearls.pubMedLink )}} >
                                                                         <Text style={styles.reference_items} key={i} >[{i+1}]</Text>
                                                                   </TouchableOpacity>
 
                                                             )
 
+                                                      }
+                                                      {item.urls === null ?
+                                                            <Text></Text>
+                                                            :
+                                                            item.urls.split(',').map((link, i) =>
+
+                                                                  <TouchableOpacity onPress={() => { handleLinks(link,pearls.urlLink) }} >
+                                                                        <Text style={styles.reference_items} key={i} >[{i + 1}]</Text>
+                                                                  </TouchableOpacity>
+
+                                                            )
                                                       }
 
                                                 </Text>
@@ -134,7 +149,6 @@ const styles = StyleSheet.create({
       reference_items: {
             backgroundColor: '#437BA5',
             fontSize: 15,
-      
       },
 
 })

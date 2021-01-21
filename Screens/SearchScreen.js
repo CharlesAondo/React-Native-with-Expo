@@ -36,8 +36,6 @@ const SearchScreenStack = ({ navigation }) => {
             }).start();
       };
 
-
-
       const [data, setData] = React.useState({
             drugs: [],
             loading: false,
@@ -125,7 +123,8 @@ const SearchScreenStack = ({ navigation }) => {
                               <TextInput
                                     placeholder="Search drug by name,brand or indication"
                                     clearButtonMode="always"
-                                    //  value={this.state.keyword}
+                                    autoCorrect={false}
+                                    autoCapitalize="none"               
                                     onChangeText={text => searchFilterFunction(text)}
                                     style={styles.input}
                               />

@@ -77,7 +77,7 @@ const Precautions = ({ route, navigation, props }) => {
                   {references.isPrecautionReferenceLoading ? <ActivityIndicator /> :
 
                         <ScrollView>
-                              {drug.contraindications === null || drug.contraindications === "" ?
+                              {drug.contraindications === null || drug.contraindications === "" || drug.contraindications === "null" ?
                                     null
                                     :
                                     <React.Fragment>
@@ -89,7 +89,7 @@ const Precautions = ({ route, navigation, props }) => {
                                     </React.Fragment>
                               }
 
-                              {drug.adverse_effects === null || drug.adverse_effects === "" ?
+                              {drug.adverse_effects === null || drug.adverse_effects === "" || drug.adverse_effects === "null" ?
                                     null
                                     :
                                     <React.Fragment>
@@ -101,7 +101,7 @@ const Precautions = ({ route, navigation, props }) => {
                                     </React.Fragment>
                               }
 
-                              {drug.teratogenicity === null || drug.teratogenicity === "" ?
+                              {drug.teratogenicity === null || drug.teratogenicity === "" || drug.teratogenicity === "null" ?
                                     null
                                     :
                                     <React.Fragment>
