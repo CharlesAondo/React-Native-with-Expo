@@ -160,14 +160,14 @@ const Thereapeutics = ({ route, navigation, props }) => {
 
                         <ScrollView>
 
-                              {soundAlikes.soundalikesData == "" || soundAlikes.soundalikesData === null ?
+                              {soundAlikes.soundalikesData == "" || soundAlikes.soundalikesData === null || soundAlikes.soundalikesData === "null" ?
                                     null
                                     :
                                     <React.Fragment>
                                           <Text style={styles.header}>Sound Alike</Text>
-                                          {soundAlikes.soundalikesData.map((item) => (
+                                          {soundAlikes.soundalikesData.map((item,i) => (
                                                 <View key={item.id}>
-                                                      <Text style={styles.item}>
+                                                      <Text style={styles.item} key={i} >
                                                             <Text style={styles.format}>{item.word}</Text>
                                                             <Text> {item.notes != "" ? "-" + " " + item.notes : ""} </Text>
                                                       </Text>
@@ -178,7 +178,7 @@ const Thereapeutics = ({ route, navigation, props }) => {
 
                               }
 
-                              {drug.interactions === null || drug.interactions == "" || drug.interactions === undefined ?
+                              {drug.interactions === null || drug.interactions == "" || drug.interactions === undefined  || drug.interactions === "null" ?
                                     null
                                     :
                                     <React.Fragment>
@@ -190,7 +190,7 @@ const Thereapeutics = ({ route, navigation, props }) => {
                                     </React.Fragment>
                               }
 
-                              {drug.reversal_agent === null || drug.reversal_agent == "" ?
+                              {drug.reversal_agent === null || drug.reversal_agent == "" || drug.reversal_agent === "null" ?
                                     null
                                     :
                                     <React.Fragment>
@@ -203,15 +203,15 @@ const Thereapeutics = ({ route, navigation, props }) => {
                               }
 
 
-                              {formulations.formulationData == "" || formulations.formulationData === null ?
+                              {formulations.formulationData == "" || formulations.formulationData === null  || formulations.formulationData === "null" ?
                                     null
 
                                     :
                                     <React.Fragment>
                                           <Text style={styles.header}>AVILABLE FORMULATIONS({formulationSpecie.specie.toUpperCase()})</Text>
-                                          {formulations.formulationData.map((item) => (
+                                          {formulations.formulationData.map((item,i) => (
                                                 <View key={item.id}>
-                                                      <Text style={styles.item}>
+                                                      <Text style={styles.item} key={i}>
                                                             <Text style={styles.format}>{item.name}{"\n"}</Text>
                                                             <Text >{item.concentrations} {item.unit}{item.notes != "" ? "." + " " + item.notes : ""} </Text>
 

@@ -45,14 +45,12 @@ const Header = ({ height }) => {
                         width: 300,
                         margin: 5
                   }}>
-                        <TextInput
+                        <Text
                               placeholder={data.name}
                               style={styles.input}
-                              onChange={() => navigation.navigate('SupportScreen')}
+                              onPress={() => navigation.navigate('SearchScreen')}
                         />
-                        <Ionicons name="md-search" size={32} color={mycolor}
-                              onPress={() => navigation.navigate('SupportScreen')}
-                        />
+                    
 
                   </View>
             </View>
