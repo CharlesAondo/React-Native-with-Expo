@@ -21,7 +21,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { AuthContext } from '../../components/context';
-import {database} from '../../database/database';
+import { database } from '../../database/database';
 
 import * as SQLite from "expo-sqlite"
 
@@ -33,17 +33,17 @@ const SignInScreen = ({ navigation }) => {
 
       db.transaction(
             tx => {
-              tx.executeSql(
-                  'SELECT vd.id,vd.name, GROUP_CONCAT(DISTINCT(vb.name)) brandNames FROM vdi_drugs vd LEFT JOIN vdi_brand_drug vbd ON vbd.drug_id = vd.id JOIN vdi_brands vb on vb.id=vbd.brand_id WHERE vd.id = 45  GROUP BY vd.id',
-                  [],
-                (_, { rows: { _array } }) => {
-                 console.log("vdi_routes",_array)
-                }
-              );
+                  tx.executeSql(
+                        'SELECT vd.id,vd.name, GROUP_CONCAT(DISTINCT(vb.name)) brandNames FROM vdi_drugs vd LEFT JOIN vdi_brand_drug vbd ON vbd.drug_id = vd.id JOIN vdi_brands vb on vb.id=vbd.brand_id WHERE vd.id = 45  GROUP BY vd.id',
+                        [],
+                        (_, { rows: { _array } }) => {
+                              console.log("vdi_routes", _array)
+                        }
+                  );
             },
             (t, error) => { console.log("db error load users"); console.log(error) },
-            (_t, _success) => { console.log("loaded users")}
-          );
+            (_t, _success) => { console.log("loaded users") }
+      );
 
       const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -79,7 +79,7 @@ const SignInScreen = ({ navigation }) => {
 
       //Checking for valid email
       const textInputChange = (val) => {
-           // alert(signIn);
+            // alert(signIn);
             console.log(val);
             let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             if (reg.test(val) === true) {
@@ -174,7 +174,7 @@ const SignInScreen = ({ navigation }) => {
                               userTokenRetrived = response;
                               console.debug("respond from api", userTokenRetrived);
                               signIn(userTokenRetrived)
-                             
+
                         }).catch(error => {
                               Alert.alert('Invalid User!', 'Username or password is incorrect.', [
                                     { text: 'Okay' }
@@ -190,10 +190,9 @@ const SignInScreen = ({ navigation }) => {
 
       return (
             <View style={styles.container}>
-                  <StatusBar backgroundColor='blue' barStyle="light-content" />
 
                   <View style={styles.header}>
-                        <Text>Logo to go Here</Text>
+                        <Image source={require('../../assets/logo_vdi.png')} style={styles.logo} />
                   </View>
 
                   <Animated.View animation="fadeInUpBig" style={[
@@ -253,7 +252,7 @@ const SignInScreen = ({ navigation }) => {
                                     secureTextEntry={data.secureTextEntry ? true : false}
                                     style={styles.textInput}
                                     autoCapitalize="none"
-                                    onChangeText={(val) => handlePasswordChange(val)} 
+                                    onChangeText={(val) => handlePasswordChange(val)}
                               />
                               <TouchableOpacity
                                     onPress={UpdateSecuredEntry}
@@ -290,7 +289,7 @@ const SignInScreen = ({ navigation }) => {
                                     style={styles.signIn}
                                     onPress={() => { loginHandle(data.userName, data.password) }}>
                                     <LinearGradient
-                                          colors={['#08d4c4', '#01ab9d']}
+                                          colors={['green', '#01ab9d']}
                                           style={styles.signIn}
                                     >
                                           <Text style={[styles.textSign, {
@@ -321,13 +320,13 @@ export default SignInScreen;
 const styles = StyleSheet.create({
       container: {
             flex: 1,
-            backgroundColor: '#009387'
+            backgroundColor: 'green'
       },
       header: {
             flex: 1,
             justifyContent: 'flex-end',
             paddingHorizontal: 20,
-            paddingBottom: 50
+            paddingBottom: 60
       },
       footer: {
             flex: 3,
@@ -384,5 +383,11 @@ const styles = StyleSheet.create({
       textSign: {
             fontSize: 18,
             fontWeight: 'bold'
+      },
+      logo: {
+            width: '100%',
+            height: '60%',
+    
+
       }
 });

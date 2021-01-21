@@ -137,11 +137,7 @@ const SearchScreenStack = ({ navigation }) => {
                               renderItem={renderItem}
                               keyExtractor={item => item.id}
 
-
                         />
-
-
-
                   </SafeAreaView>
 
             </View>
