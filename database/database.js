@@ -145,6 +145,11 @@ const setupCreateTablesAsync = async () => {
       console.log("Charles Creating Formulation Specie! Table...........", formulationSpecieTable);
       console.log('....................................................................');
 
+      let drugFavorites = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_user_favourite_drugs (id INTEGER PRIMARY KEY,drug_id INTERGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,FOREIGN KEY (drug_id) REFERENCES vdi_drugs(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating vdi user Favourite Drug! Table...........", drugFavorites);
+      console.log('....................................................................');
+
+
       
 
 

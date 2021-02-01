@@ -66,7 +66,6 @@ const SearchScreenStack = ({ navigation }) => {
       useEffect(() => {
             getDrugs()
       }, [])
-      console.log(data.drugs)
 
       const searchFilterFunction = text => {
             const newData = data.tempDrugs.filter(item => {
@@ -104,7 +103,7 @@ const SearchScreenStack = ({ navigation }) => {
       );
       const renderItem = ({ item }) => <Item name={item.name} brand={item.brandNames} indications={item.indicationNames} item={item}/>;
 
-      // console.log(data.drugs)
+
       return (
             <View>
                   <SafeAreaView >

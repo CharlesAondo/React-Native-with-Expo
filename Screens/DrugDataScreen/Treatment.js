@@ -4,8 +4,11 @@ import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { AuthContext } from '../../components/context'
 import * as SQLite from "expo-sqlite"
 import { createStackNavigator } from '@react-navigation/stack';
-
-import DosageDetails from './DetailScreens/DosageDetails'
+import { LinearGradient } from 'expo-linear-gradient';
+import DosageDetails from './DetailScreens/DosageDetails';
+import { favDrugRequest } from '../../hooks/favDrugRequest';
+import { set } from 'react-native-reanimated';
+import { Modal, Button } from 'react-native-paper';
 
 const TreatmentsStack = createStackNavigator();
 const Stack = createStackNavigator();
@@ -29,6 +32,14 @@ const Treatments = ({ route, navigation, props }) => {
       const drug = React.useContext(AuthContext);
       const [drugs, setDrugs] = useState({})
 
+      //const [modal, setModal] = useState('false');
+
+      const [modal, setModal] = React.useState({
+            showModal: false,
+            showButton: true
+      })
+
+
       const [data, setData] = React.useState({
             treatment_data: '',
             isLoading: true
@@ -42,6 +53,11 @@ const Treatments = ({ route, navigation, props }) => {
       const [brandsData, setBrands] = React.useState({
             brands: '',
             loadingBrands: true
+      })
+
+      const [favDrugData, setFavDrugs] = React.useState({
+            favouriteDrugs: '',
+            loadingFavs: true
       })
 
 
@@ -106,18 +122,135 @@ const Treatments = ({ route, navigation, props }) => {
 
             }
 
+            const getFavouriteDrugs = () => {
+                  db.transaction(
+                        tx => {
+                              tx.executeSql(
+                                    'SELECT * FROM vdi_user_favourite_drugs WHERE drug_id = ' + drug.id,
+                                    [],
+                                    (_, { rows: { _array } }) => {
+                                          setFavDrugs({
+                                                ...favDrugData,
+                                                favouriteDrugs: _array,
+                                                loadingFavs: false
+                                          })
+                                    }
+                              );
+                        },
+                  );
+
+            }
+
+            const insertData = () => {
+
+            }
+
             categories(),
-            getBrands(),
-            getData()
+                  getBrands(),
+                  getData(),
+                  getFavouriteDrugs(),
+                  insertData()
       }, [])
+     
+      const saveFaveDrugs = () => {
+           
+            if (favDrugData.favouriteDrugs.length > 0) {
+                  favDrugData.favouriteDrugs.map((item, i) => {
+                        db.transaction(
+                              tx => {
+                                    tx.executeSql(
+                                          'DELETE FROM vdi_user_favourite_drugs WHERE id = ' + item.id,
+                                          [],
+                                    (tx,results) =>{
+                                          if (results.rowsAffected > 0) {
+                                                setModal({
+                                                      ...modal,
+                                                      showModal: false,
+                                                      showButton: false
+                                                })
+                                          } else alert('Failed....');
+                                    }
+                                    );
+                              },
+                        );
+                  })
+            } else {
+                  db.transaction(function (tx) {
+                        tx.executeSql(
+                              'INSERT INTO vdi_user_favourite_drugs (drug_id) VALUES (?)',
+                              [drug.id],
+                              (tx, results) => {
+                                    console.log('Results', results.rowsAffected);
+                                    if (results.rowsAffected > 0) {
+                                          setModal({
+                                                ...modal,
+                                                showModal: false,
+                                                showButton: false
+                                          })
+                                    } else alert('Failed....');
+                              }
+                        );
+                  });
+            }
 
-
+      }
+      console.log("data.......",modal.showButton)
       return (
             <View style={styles.container}>
 
-                  {data.isLoading || cateData.loadingCategory || brandsData.loadingBrands || data.isLoading.isLoading? <ActivityIndicator color="green" size= "large"/> :
+                  {data.isLoading || cateData.loadingCategory || brandsData.loadingBrands || data.isLoading || favDrugData.loadingFavs ? <ActivityIndicator color="green" size="large" /> :
 
                         <ScrollView>
+                              {modal.showButton === true ?
+                                    favDrugData.favouriteDrugs.length < 1 ?
+                                          <TouchableOpacity
+                                              // disabled={modal.showButton ? true: flase}
+                                                style={styles.buttoon}
+                                                onPress={() => {
+                                                      setModal({
+                                                            ...Modal,
+                                                            showModal: true,
+
+                                                      })
+                                                }}>
+                                                <LinearGradient
+                                                      colors={['green', '#01ab9d']}
+                                                      style={styles.buttoon}
+                                                >
+                                                      <Text style={[styles.textButton, {
+                                                            color: '#fff'
+                                                      }]}>Add to Favourite List </Text>
+                                                </LinearGradient>
+                                          </TouchableOpacity>
+
+                                          :
+
+                                          <React.Fragment>
+                                                <TouchableOpacity
+                                                      style={styles.buttoon}
+                                                      onPress={() => {
+                                                            {
+                                                                  setModal({
+                                                                        ...Modal,
+                                                                        showModal: true,
+                                                                  })
+                                                            }
+                                                      }}>
+                                                      <LinearGradient
+                                                            colors={['green', '#01ab9d']}
+                                                            style={styles.buttoon}
+                                                      >
+                                                            <Text style={[styles.textButton, {
+                                                                  color: '#fff'
+                                                            }]}>Remove From Favourite List</Text>
+                                                      </LinearGradient>
+                                                </TouchableOpacity>
+                                          </React.Fragment>
+
+                                    :
+                                    null
+                              }
+
                               {cateData.categories.map((item) => (
                                     <View key={item.id}>
                                           <TouchableOpacity onPress={() => navigation.navigate('Details',
@@ -163,6 +296,37 @@ const Treatments = ({ route, navigation, props }) => {
                               ))}
                         </ScrollView>
                   }
+                  <Modal
+                        animationType="fade"
+                        transparent={false}
+                        visible={modal.showModal}
+
+
+                  >
+                        <View style={styles.indication}>
+                              {modal.addFave ?
+                                    <Text>Do you want to add {drug.name} to fav List</Text>
+                                    :
+                                    <Text>Do you want to remove {drug.name} from fav list</Text>
+                              }
+                        </View>
+                        <View style={styles.modalButtons}>
+                              <Button icon="camera" mode="contained" onPress={() => {
+                                    setModal({
+                                          ...Modal,
+                                          showModal: false
+
+                                    })
+                              }} >
+                                    Cancel
+                              </Button>
+
+                              <Button icon="camera" mode="contained" onPress={() => saveFaveDrugs()} >
+                                    save
+                              </Button>
+                        </View>
+                  </Modal>
+
             </View>
       )
 }
@@ -171,8 +335,8 @@ const Treatments = ({ route, navigation, props }) => {
 const TreatmentsScreen = ({ navigation }) => {
       return (
             <Stack.Navigator headerMode="none">
-                  <Stack.Screen name="Treatments" component={Treatments}/>
-                  <Stack.Screen name="DosageDetails" component={DosageDetails}/>
+                  <Stack.Screen name="Treatments" component={Treatments} />
+                  <Stack.Screen name="DosageDetails" component={DosageDetails} />
             </Stack.Navigator>
       );
 }
@@ -244,5 +408,23 @@ const styles = StyleSheet.create({
       dosage_amount: {
             fontSize: 12,
             maxWidth: "auto",
+      },
+      buttoon: {
+            width: '100%',
+            height: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 10
+      },
+      textButton: {
+            fontSize: 18,
+            fontWeight: 'bold'
+      },
+      modal: {
+
+      },
+      modalButtons: {
+            flexDirection: 'row'
+
       }
 })
