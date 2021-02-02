@@ -36,10 +36,12 @@ const Treatments = ({ route, navigation, props }) => {
 
       const [modal, setModal] = React.useState({
             showModal: false,
-            showButton: true
       })
 
+      const [addButton, setAddButton] = React.useState({
+            showAddDrugButton: true
 
+      })
       const [data, setData] = React.useState({
             treatment_data: '',
             isLoading: true
@@ -151,60 +153,41 @@ const Treatments = ({ route, navigation, props }) => {
                   getFavouriteDrugs(),
                   insertData()
       }, [])
-     
+
       const saveFaveDrugs = () => {
-           
-            if (favDrugData.favouriteDrugs.length > 0) {
-                  favDrugData.favouriteDrugs.map((item, i) => {
-                        db.transaction(
-                              tx => {
-                                    tx.executeSql(
-                                          'DELETE FROM vdi_user_favourite_drugs WHERE id = ' + item.id,
-                                          [],
-                                    (tx,results) =>{
-                                          if (results.rowsAffected > 0) {
-                                                setModal({
-                                                      ...modal,
-                                                      showModal: false,
-                                                      showButton: false
-                                                })
-                                          } else alert('Failed....');
-                                    }
-                                    );
-                              },
-                        );
-                  })
-            } else {
-                  db.transaction(function (tx) {
-                        tx.executeSql(
-                              'INSERT INTO vdi_user_favourite_drugs (drug_id) VALUES (?)',
-                              [drug.id],
-                              (tx, results) => {
-                                    console.log('Results', results.rowsAffected);
-                                    if (results.rowsAffected > 0) {
-                                          setModal({
-                                                ...modal,
-                                                showModal: false,
-                                                showButton: false
-                                          })
-                                    } else alert('Failed....');
-                              }
-                        );
-                  });
-            }
+            db.transaction(function (tx) {
+                  tx.executeSql(
+                        'INSERT INTO vdi_user_favourite_drugs (drug_id) VALUES (?)',
+                        [drug.id],
+                        (tx, results) => {
+                              console.log('Results', results.rowsAffected);
+                              if (results.rowsAffected > 0) {
+                                    setModal({
+                                          ...modal,
+                                          showModal: false,
+                                          showButton: false
+                                    })
+                                    setAddButton({
+                                          ...addButton,
+                                          showAddDrugButton:false
+                                    })
+                                    console.log('added..', results.rowsAffected)
+                              } else alert('Failed....');
+                        }
+                  );
+            });
+
 
       }
-      console.log("data.......",modal.showButton)
       return (
             <View style={styles.container}>
 
                   {data.isLoading || cateData.loadingCategory || brandsData.loadingBrands || data.isLoading || favDrugData.loadingFavs ? <ActivityIndicator color="green" size="large" /> :
 
                         <ScrollView>
-                              {modal.showButton === true ?
-                                    favDrugData.favouriteDrugs.length < 1 ?
+                              {addButton.showAddDrugButton  && favDrugData.favouriteDrugs.length < 1 ? 
+                                    
                                           <TouchableOpacity
-                                              // disabled={modal.showButton ? true: flase}
                                                 style={styles.buttoon}
                                                 onPress={() => {
                                                       setModal({
@@ -222,33 +205,8 @@ const Treatments = ({ route, navigation, props }) => {
                                                       }]}>Add to Favourite List </Text>
                                                 </LinearGradient>
                                           </TouchableOpacity>
-
                                           :
-
-                                          <React.Fragment>
-                                                <TouchableOpacity
-                                                      style={styles.buttoon}
-                                                      onPress={() => {
-                                                            {
-                                                                  setModal({
-                                                                        ...Modal,
-                                                                        showModal: true,
-                                                                  })
-                                                            }
-                                                      }}>
-                                                      <LinearGradient
-                                                            colors={['green', '#01ab9d']}
-                                                            style={styles.buttoon}
-                                                      >
-                                                            <Text style={[styles.textButton, {
-                                                                  color: '#fff'
-                                                            }]}>Remove From Favourite List</Text>
-                                                      </LinearGradient>
-                                                </TouchableOpacity>
-                                          </React.Fragment>
-
-                                    :
-                                    null
+                                          null
                               }
 
                               {cateData.categories.map((item) => (
@@ -303,27 +261,33 @@ const Treatments = ({ route, navigation, props }) => {
 
 
                   >
-                        <View style={styles.indication}>
-                              {modal.addFave ?
-                                    <Text>Do you want to add {drug.name} to fav List</Text>
-                                    :
-                                    <Text>Do you want to remove {drug.name} from fav list</Text>
-                              }
+                        <View style={styles.modalView}>
+
+                              <Text>Do you want to add {drug.name} to fav List</Text>
+
+                              <View >
+                                    <View style={styles.modalButtons}>
+                                          <Button style={styles.textStyleCancel} onPress={() => {
+                                                setModal({
+                                                      ...Modal,
+                                                      showModal: false,
+
+                                                })
+                                          }}>Cancel</Button>
+
+                                          <Button
+                                                style={styles.textStyleSave}
+
+                                                onPress={item => saveFaveDrugs()}
+
+                                          >Save</Button>
+
+                                    </View>
+                              </View>
+
                         </View>
                         <View style={styles.modalButtons}>
-                              <Button icon="camera" mode="contained" onPress={() => {
-                                    setModal({
-                                          ...Modal,
-                                          showModal: false
 
-                                    })
-                              }} >
-                                    Cancel
-                              </Button>
-
-                              <Button icon="camera" mode="contained" onPress={() => saveFaveDrugs()} >
-                                    save
-                              </Button>
                         </View>
                   </Modal>
 
@@ -420,11 +384,37 @@ const styles = StyleSheet.create({
             fontSize: 18,
             fontWeight: 'bold'
       },
-      modal: {
-
+      modalView: {
+            margin: 20,
+            backgroundColor: 'whitesmoke',
+            borderRadius: 20,
+            padding: 35,
+            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: {
+                  width: 0,
+                  height: 5,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
       },
       modalButtons: {
-            flexDirection: 'row'
+            flexDirection: 'row',
 
-      }
+      },
+      textStyleSave: {
+            backgroundColor: 'green',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginLeft: 20
+
+      },
+      textStyleCancel: {
+            backgroundColor: 'red',
+            fontWeight: 'bold',
+            textAlign: 'center',
+
+
+      },
 })

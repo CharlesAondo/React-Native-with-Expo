@@ -17,6 +17,7 @@ import * as SQLite from "expo-sqlite"
 import { drugCategoryDrug } from '../database/drugCategoryDrug';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 const Stack = createStackNavigator();
 
 

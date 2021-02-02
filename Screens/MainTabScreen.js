@@ -21,8 +21,6 @@ const DetailsStact = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 
-let base64 = require('base-64');
-let headers = new Headers();
 
 import * as SQLite from "expo-sqlite"
 
@@ -70,6 +68,7 @@ const HomeScreenstack = ({ navigation }) => {
                                                 )}>
                                                       <Text style={styles.item}>{item.name}</Text>
                                                 </TouchableOpacity>
+                                               
                                           </View>
 
                                     ))}
