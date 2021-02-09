@@ -17,6 +17,7 @@ import * as SQLite from "expo-sqlite"
 import { drugCategoryDrug } from '../database/drugCategoryDrug';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 const Stack = createStackNavigator();
 
 
@@ -66,7 +67,6 @@ const SearchScreenStack = ({ navigation }) => {
       useEffect(() => {
             getDrugs()
       }, [])
-      console.log(data.drugs)
 
       const searchFilterFunction = text => {
             const newData = data.tempDrugs.filter(item => {
@@ -104,7 +104,7 @@ const SearchScreenStack = ({ navigation }) => {
       );
       const renderItem = ({ item }) => <Item name={item.name} brand={item.brandNames} indications={item.indicationNames} item={item}/>;
 
-      // console.log(data.drugs)
+
       return (
             <View>
                   <SafeAreaView >

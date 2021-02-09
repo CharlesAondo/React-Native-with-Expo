@@ -18,7 +18,8 @@ import {therapeutic_references} from '../database/therapeutic_reference';
 import {formats} from '../database/formats';
 import {formulations} from '../database/formulations';
 import {soundalikes} from '../database/soundalikes';
-import {formulationSpecie} from '../database/formulationSpecie'
+import {formulationSpecie} from '../database/formulationSpecie';
+import {favDrugs} from '../database/favDrugs';
 const useDatabase = () => {
       const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
 
@@ -48,6 +49,7 @@ const useDatabase = () => {
                         await formulations.insertFormulationsAsync();
                         await soundalikes.insertSoundAlikesAsync();
                         await formulationSpecie.insertFormulationSpecieAsync();
+                        await favDrugs.insertFavDrugsToDatabaseAsync();
 
 
                         setDBLoadingComplete(true);
