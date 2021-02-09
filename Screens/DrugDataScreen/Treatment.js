@@ -411,10 +411,9 @@ const styles = StyleSheet.create({
 
       },
       textStyleCancel: {
-            backgroundColor: 'red',
+            backgroundColor: 'white',
             fontWeight: 'bold',
             textAlign: 'center',
-
 
       },
 })
