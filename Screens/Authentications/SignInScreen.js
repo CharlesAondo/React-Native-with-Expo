@@ -34,7 +34,7 @@ const SignInScreen = ({ navigation }) => {
       db.transaction(
             tx => {
                   tx.executeSql(
-                        'SELECT * FROM vdi_user_favourite_drugs',
+                        'SELECT * FROM vdi_user',
                         [],
                         (_, { rows: { _array } }) => {
                               console.log("vdi_routes", _array)
@@ -76,6 +76,7 @@ const SignInScreen = ({ navigation }) => {
       })
 
       const { signIn } = React.useContext(AuthContext);
+      const { saveData } = React.useContext(AuthContext);
 
       //Checking for valid email
       const textInputChange = (val) => {
@@ -171,8 +172,10 @@ const SignInScreen = ({ navigation }) => {
                               }
                         })
                         .then(response => {
-                              userTokenRetrived = response;
-                              console.debug("respond from api", userTokenRetrived);
+                              let userTokenRetrived = { 'token': response.token };
+                              console.debug("respond from api", response);
+
+                              saveData(response.data);
                               signIn(userTokenRetrived)
 
                         }).catch(error => {
@@ -387,7 +390,7 @@ const styles = StyleSheet.create({
       logo: {
             width: '100%',
             height: '60%',
-    
+
 
       }
 });
