@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Vet_Drug_Index_1.2",
-    "slug": "Vet_Drug_Index",
-    "version": "1.2.0",
-    "orientation": "portrait",
-    "icon": "./assets/app_icon.png",
-    "splash": {
+      "name": "Vet_Drug_Index V1.2",
+      "slug": "Vet_Drug_Index",
+      "version": "1.2.0",
+      "orientation": "portrait",
+      "icon": "./assets/app_icon.png",
+      "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
