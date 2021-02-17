@@ -2,7 +2,6 @@ import React, { Component, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import {
       useTheme,
-      Avatar,
       Title,
       Caption,
       Paragraph,
@@ -17,6 +16,7 @@ import {
       DrawerItem
 } from '@react-navigation/drawer';
 
+
 //import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { AuthContext } from '../components/context';
@@ -25,7 +25,9 @@ import { Feather } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import * as SQLite from "expo-sqlite"
+import * as SQLite from "expo-sqlite";
+import { Avatar, Accessory } from 'react-native-elements';
+
 
 const db = SQLite.openDatabase('db.db')
 export function DrawerContent(props) {
@@ -36,52 +38,63 @@ export function DrawerContent(props) {
 
       const [user, setUser] = React.useState({
             userData: '',
-            isLoading: true
+            isLoading: true,
+            acronym:''
       })
 
-      useEffect(() => {
 
-            const getUser = () => {
-                  db.transaction(
-                        tx => {
-                              tx.executeSql(
-                                    'select * from vdi_user',
-                                    [],
-                                    (_, { rows: { _array } }) => {
+      const getUser = () => {
+            db.transaction(
+                  tx => {
+                        tx.executeSql(
+                              'select * from vdi_user',
+                              [],
+                              (_, { rows: { _array } }) => {
+                                    _array.map((item) => {
+                                          var matches = item.name.match(/\b(\w)/g); 
+                                          var acronym = matches.join('')
                                           setUser({
                                                 ...user,
-                                                userData: _array,
+                                                userData: item,
+                                                acronym:acronym,
                                                 isLoading: false
                                           })
-                                    }
 
-                              );
-                        },
-                  );
-            }
-            getUser();
-            console.log(user.userData)
+                                    })
 
-      }, [])
+                              }
+
+                        );
+                  },
+            );
+      }
+      getUser();
+
+       console.log('user data', user.acronym)
+
 
 
       return (
             <View style={{ flex: 1 }}>
-                  <DrawerContentScrollView {...props}>
+                  <DrawerContentScrollView >
                         <View style={styles.drawerContent}>
                               <View style={styles.userInfoSection}>
-                                    <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                                          <Avatar.Image
-                                                source={{
-                                                      uri: 'https://api.adorable.io/avatars/50/abott@adorable.png'
-                                                }}
-                                                size={50}
-                                          />
+                                    <View style={{ marginTop: 10 , flexDirection:'row'}}>
 
-                                          <View style={{ marginLeft: 15, flexDirection: 'column' }}>
-                                                <Title style={styles.title}>John Doe</Title>
-                                                <Caption style={styles.caption}>@j_doe</Caption>
+                                          <View style={styles.avatar}>
+                                                <Avatar
+                                                      size={50}
+                                                      title={user.acronym}
+                                                      onPress={() => console.log("Works!")}
+                                                      activeOpacity={0.7}
+                                                />
                                           </View>
+
+                                                <View style={{ marginLeft: 5, flexDirection: 'column' }}>
+                                                      <Title style={styles.title}>{user.userData.title}. {user.userData.name}</Title>
+                                                      <Caption style={styles.caption}>{user.userData.email}</Caption>
+                                                </View>
+
 
 
 
@@ -170,16 +183,18 @@ const styles = StyleSheet.create({
             flex: 1,
       },
       userInfoSection: {
-            paddingLeft: 20,
+            paddingLeft: 10,
       },
       title: {
-            fontSize: 16,
+            fontSize: 14,
             marginTop: 3,
             fontWeight: 'bold',
       },
       caption: {
             fontSize: 14,
-            lineHeight: 14,
+            lineHeight: 15,
+            fontWeight: 'bold',
+
       },
       row: {
             marginTop: 20,
@@ -209,4 +224,10 @@ const styles = StyleSheet.create({
             paddingVertical: 12,
             paddingHorizontal: 16,
       },
+      avatar: {
+            backgroundColor:  '#01ab9d',
+            alignItems: 'center',
+
+
+      }
 });
