@@ -150,7 +150,7 @@ const setupCreateTablesAsync = async () => {
       console.log('....................................................................');
 
 
-      let userTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_user (id INTEGER PRIMARY KEY,name varchar(25),email varchar(255),support_counterpart string,title varchar,deleted_at timestamp NULL DEFAULT NULL,created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL)", []);    
+      let userTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_user (id INTEGER PRIMARY KEY,name varchar(25),email varchar(255),support_counterpart string,title varchar,deleted_at timestamp NULL DEFAULT NULL,created_at varchar,updated_at timestamp NULL DEFAULT NULL)", []);    
       console.log("Charles Creating VDI User! Table...........", userTable);
       console.log('....................................................................');
       

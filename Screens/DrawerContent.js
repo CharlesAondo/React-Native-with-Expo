@@ -70,10 +70,6 @@ export function DrawerContent(props) {
       }
       getUser();
 
-       console.log('user data', user.acronym)
-
-
-
       return (
             <View style={{ flex: 1 }}>
                   <DrawerContentScrollView >
@@ -85,7 +81,6 @@ export function DrawerContent(props) {
                                                 <Avatar
                                                       size={50}
                                                       title={user.acronym}
-                                                      onPress={() => console.log("Works!")}
                                                       activeOpacity={0.7}
                                                 />
                                           </View>
