@@ -27,6 +27,7 @@ import RootStackScreen from './Screens/RootStackScreen';
 import SearchScreen from './Screens/SearchScreen';
 import SettingsScreen from './Screens/SettingsScreen';
 import BookmarkScreen from './Screens/BookmarkScreen';
+import SupportScreen from './Screens/SupportScreen';
 import { AsyncStorage } from 'react-native';
 import useDatabase from './hooks/useDatabase';
 import * as SQLite from "expo-sqlite";
@@ -180,7 +181,8 @@ const App = () => {
                                     <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
                                     <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
                                     <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
-                                    <Drawer.Screen name="SearchScreen" component={SearchScreen} />
+                                    <Drawer.Screen name="SupportScreen" component={SupportScreen} />
+
                               </Drawer.Navigator>
                         )
                               :

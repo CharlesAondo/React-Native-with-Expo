@@ -144,11 +144,7 @@ export function DrawerContent(props) {
                                     />
                                     <DrawerItem
                                           icon={({ color, size }) => (
-                                                <Ionicons
-                                                      name="ios-contact"
-                                                      color={color}
-                                                      size={size}
-                                                />
+                                                <MaterialIcons name="contact-mail" size={size} color={color} />
                                           )}
                                           label="Support"
                                           onPress={() => { props.navigation.navigate('SupportScreen') }}

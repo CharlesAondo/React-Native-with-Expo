@@ -18,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getCurrentDate } from '../hooks/getCurrentDate';
 import {UrlServices} from '../components/UrlServices';
+import Footer from '../components/Footer';
 //const HomeStack = createStackNavigator();
 const DetailsStact = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -27,6 +28,7 @@ let base64 = require('base-64');
 import * as SQLite from "expo-sqlite"
 import NetInfo from '@react-native-community/netinfo';
 import * as Device from 'expo-device';
+
 
 const db = SQLite.openDatabase('db.db')
 
@@ -66,8 +68,8 @@ const HomeScreenstack = ({ navigation }) => {
                               Alert.alert('Authentication Failed!', 'We attempted to authenticate your credentials and it has failed.', [
                                     { text: 'Okay' }
                               ]);
-                              await AsyncStorage.removeItem('userToken');
-                              await AsyncStorage.removeItem('dateLoggedIn');
+                             // await AsyncStorage.removeItem('userToken');
+                              //await AsyncStorage.removeItem('dateLoggedIn');
 
                         }
                   } else {
@@ -158,6 +160,7 @@ const HomeScreenstack = ({ navigation }) => {
 
                                     ))}
                               </ScrollView>
+                              <Footer/>
                         </React.Fragment>
                   }
                   <Modal
