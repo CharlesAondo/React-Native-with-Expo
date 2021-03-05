@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
 import {
       View, Text, Button, StyleSheet, StatusBar,
-      FlatList, ActivityIndicator, Alert, ScrollView, SearchBox, TextInput, AsyncStorage
+      FlatList, ActivityIndicator, Alert, ScrollView, SearchBox, TextInput, AsyncStorage, Modal
 } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { FontAwesome } from '@expo/vector-icons';
@@ -14,21 +14,24 @@ import { UrlServices } from '../components/UrlServices';
 
 import emailjs from 'emailjs-com';
 import axios from 'axios';
+import { BlurView } from 'expo-blur';
 
 import Header from './Header';
 import * as Device from 'expo-device';
 let base64 = require('base-64');
 
 import * as SQLite from "expo-sqlite"
+import * as Linking from 'expo-linking';
+import { Title } from 'react-native-paper';
 
 const db = SQLite.openDatabase('db.db')
 
 const SupportScreen = (navigation) => {
-
       const [data, setData] = React.useState({
             comment: '',
             disabledSubmit: true,
-            supportInfo: ''
+            supportInfo: '',
+            isLoading: false
 
       })
       const textInputChange = (val) => {
@@ -37,6 +40,13 @@ const SupportScreen = (navigation) => {
                   comment: val
             })
       }
+      const handlePress = () => {
+            console.log('hello')
+      }
+
+      const [modal, setModal] = React.useState({
+            showModal: false,
+      })
 
       useEffect(() => {
 
@@ -65,16 +75,21 @@ const SupportScreen = (navigation) => {
 
       }, [])
 
-
       const handleSubmit = async (value) => {
+
             const token = await AsyncStorage.getItem('userToken');
 
             if (data.comment.length == 0) {
-                  Alert.alert('Request Body  Empty', 'Request field cannot be empty! Please type fill the form before submitting your request', [
+                  Alert.alert('Request Body  Empty', 'Request field cannot be empty! Please  fill the form before submitting your request', [
                         { text: 'Okay' }
                   ]);
             } else {
-                  console.log(typeof(data.supportInfo.support_counterpart))
+                  setData({
+                        ...data,
+                        isLoading: true
+                  })
+
+                  console.log(typeof (data.supportInfo.support_counterpart))
                   let h = new Headers();
                   h.append('Accept', 'application/json');
                   h.append('Content-Type', 'application/json');
@@ -86,8 +101,8 @@ const SupportScreen = (navigation) => {
                   let myObj = {
                         'subject': 'Vet Drug Index Support',
                         'description': 'Device name : ' + Device.deviceName + '\nComments: ' + data.comment,
-                        'priority':'low',
-                        'support_counterpart':(data.supportInfo.support_counterpart).toString()
+                        'priority': 'low',
+                        'support_counterpart': (data.supportInfo.support_counterpart).toString()
                   };
 
                   let req = new Request(UrlServices.supportURl(), {
@@ -109,23 +124,37 @@ const SupportScreen = (navigation) => {
                               });
                         })
                         .then((result) => { // SUCCESS part
+                              setData({
+                                    ...data,
+                                    isLoading: false
+                              })
+
+                              Alert.alert('Success!', 'Your Request has recieved by our support Team!', [
+                                    { text: 'Okay' }
+
+                              ]);
                               console.log("Success: ", result); // Response from api in json
                         }, (error) => { // ERROR part
-                              // Because we rejected responseInJson.message, error will contain message from api. In this case "Some nasty error message!"
-                              console.log("Error: ", error);
+                              setData({
+                                    ...data,
+                                    isLoading: false
+                              })
+                              Alert.alert('Failed!', 'Your Request Failed tp send, You can send us an email with your query to support@timelessveterinary.com', [
+                                    { text: 'Okay' }
+
+                              ]);
                         })
                         .catch(catchError => {
                               console.log("Catch: ", catchError);
                         })
             }
-
-
       }
       return (
             <View style={styles.container}>
                   <React.Fragment>
                         <Header />
                         <View>
+
                               <View style={styles.textAreaContainer} >
                                     <TextInput
                                           style={styles.textArea}
@@ -152,9 +181,18 @@ const SupportScreen = (navigation) => {
 
                                     </LinearGradient>
                               </TouchableOpacity>
-                        </View>
-                  </React.Fragment>
 
+
+                        </View>
+
+                  </React.Fragment>
+                  {data.isLoading ?
+                        <BlurView intensity={50} style={[StyleSheet.absoluteFill, styles.nonBlurredContent]}>
+                              <ActivityIndicator color='green' size='large' />
+                        </BlurView>
+                        :
+                        null
+                  }
             </View>
       );
 };
@@ -171,7 +209,7 @@ const styles = StyleSheet.create({
       textAreaContainer: {
             borderColor: 'grey',
             borderWidth: 1,
-            padding: 5
+            padding: 5,
       },
       textArea: {
             height: 150,
@@ -190,4 +228,9 @@ const styles = StyleSheet.create({
             fontSize: 18,
             fontWeight: 'bold'
       },
+      nonBlurredContent: {
+            alignItems: 'center',
+            justifyContent: 'center',
+      },
+
 });
