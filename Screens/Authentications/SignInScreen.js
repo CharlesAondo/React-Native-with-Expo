@@ -168,27 +168,23 @@ const SignInScreen = ({ navigation }) => {
                   return;
             } else {
                   fetch(req)
-                        .then(response => {
-                              if (response.status === 200) {
-
-                                    return response.json();
-                              } else {
-                                    throw new Error('Something went wrong on api server!');
-                              }
-                        })
-                        .then(response => {
-                              let userTokenRetrived = { 'token': response.token };
-                              console.debug("respond from api", response);
-
-                              saveData(response.data);
-                              signIn(userTokenRetrived)
-
-                        }).catch(error => {
-                              Alert.alert('Invalid User!', 'Username or password is incorrect.', [
-                                    { text: 'Okay' }
-                              ]);
-                              console.debug("respond from api", error.message);
-                        });
+                  .then((response) => {
+                      if (response.status === 200) { // Or what ever you want to check
+                          return Promise.resolve(response.json()); // This will end up in SUCCESS part
+                      }
+                      return Promise.resolve(response.json()).then((responseInJson) => { // This will end up in ERROR part
+                          return Promise.reject(responseInJson.message); //  responseInJson.message = "Some nasty error message!"
+                      });
+                  })
+                  .then((result) => { // SUCCESS part
+                      console.log("Success: ", result); // Response from api in json
+                  }, (error) => { // ERROR part
+                      // Because we rejected responseInJson.message, error will contain message from api. In this case "Some nasty error message!"
+                      console.log("Error: ", error); 
+                  })
+                  .catch(catchError => {
+                      console.log("Catch: ", catchError);
+                  })
             }
 
 
