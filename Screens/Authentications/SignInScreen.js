@@ -22,22 +22,27 @@ import { Feather } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { AuthContext } from '../../components/context';
 import { database } from '../../database/database';
-
+import {getCurrentDate} from '../../hooks/getCurrentDate';
+import {UrlServices} from '../../components/UrlServices';
 import * as SQLite from "expo-sqlite"
+import * as Device from 'expo-device';
+
 
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
 
 
 const SignInScreen = ({ navigation }) => {
+      const date  = getCurrentDate.currentDate();
+
 
       db.transaction(
             tx => {
                   tx.executeSql(
-                        'SELECT * FROM vdi_user_favourite_drugs',
+                        'SELECT * FROM vdi_user',
                         [],
                         (_, { rows: { _array } }) => {
-                              console.log("vdi_routes", _array)
+                              console.log("vdi_routes", date)
                         }
                   );
             },
@@ -76,6 +81,7 @@ const SignInScreen = ({ navigation }) => {
       })
 
       const { signIn } = React.useContext(AuthContext);
+      const { saveData } = React.useContext(AuthContext);
 
       //Checking for valid email
       const textInputChange = (val) => {
@@ -131,7 +137,7 @@ const SignInScreen = ({ navigation }) => {
             });
       }
       const loginHandle = (userName, password, userTokenRetrived) => {
-            let uri = "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/login";
+
             let h = new Headers();
             h.append('Accept', 'application/json');
             h.append('Content-Type', 'application/json');
@@ -143,10 +149,10 @@ const SignInScreen = ({ navigation }) => {
             let myObj = {
                   "email": userName,
                   "password": password,
-                  "device": "hdhhdhd"
+                  "device": Device.deviceName
             };
 
-            let req = new Request(uri, {
+            let req = new Request(UrlServices.loginUrl(), {
                   method: "POST",
                   headers: h,
                   credentials: 'include',
@@ -164,23 +170,23 @@ const SignInScreen = ({ navigation }) => {
                   fetch(req)
                         .then(response => {
                               if (response.status === 200) {
-
                                     return response.json();
                               } else {
                                     throw new Error('Something went wrong on api server!');
-                              }
+                      }
                         })
                         .then(response => {
-                              userTokenRetrived = response;
-                              console.debug("respond from api", userTokenRetrived);
+                              let userTokenRetrived = { 'token': response.token };
+                              console.debug("respond from api", response);
+                              saveData(response.data);
                               signIn(userTokenRetrived)
-
                         }).catch(error => {
                               Alert.alert('Invalid User!', 'Username or password is incorrect.', [
                                     { text: 'Okay' }
                               ]);
                               console.debug("respond from api", error.message);
-                        });
+                      });
+
             }
 
 
@@ -387,7 +393,7 @@ const styles = StyleSheet.create({
       logo: {
             width: '100%',
             height: '60%',
-    
+
 
       }
 });

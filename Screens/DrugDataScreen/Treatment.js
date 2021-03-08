@@ -9,6 +9,9 @@ import DosageDetails from './DetailScreens/DosageDetails';
 import { favDrugRequest } from '../../hooks/favDrugRequest';
 import { set } from 'react-native-reanimated';
 import { Modal, Button } from 'react-native-paper';
+import NetInfo from '@react-native-community/netinfo';
+import { AsyncStorage } from 'react-native';
+import {ReAuthorization} from '../Authentications/ReAuthorization';
 
 const TreatmentsStack = createStackNavigator();
 const Stack = createStackNavigator();
@@ -61,10 +64,17 @@ const Treatments = ({ route, navigation, props }) => {
             favouriteDrugs: '',
             loadingFavs: true
       })
+      const [tokenData, setTokenValues] = React.useState({
+            token: '',
+            connectionState: false,
+            loading: true
+      })
 
 
       useEffect(() => {
+            ReAuthorization.reAuthuroized();
 
+           
             const categories = () => {
                   db.transaction(
                         tx => {
@@ -84,6 +94,7 @@ const Treatments = ({ route, navigation, props }) => {
                         },
                   );
             }
+
 
             const getBrands = () => {
                   db.transaction(
@@ -169,7 +180,7 @@ const Treatments = ({ route, navigation, props }) => {
                                     })
                                     setAddButton({
                                           ...addButton,
-                                          showAddDrugButton:false
+                                          showAddDrugButton: false
                                     })
                                     console.log('added..', results.rowsAffected)
                               } else alert('Failed....');
@@ -185,28 +196,28 @@ const Treatments = ({ route, navigation, props }) => {
                   {data.isLoading || cateData.loadingCategory || brandsData.loadingBrands || data.isLoading || favDrugData.loadingFavs ? <ActivityIndicator color="green" size="large" /> :
 
                         <ScrollView>
-                              {addButton.showAddDrugButton  && favDrugData.favouriteDrugs.length < 1 ? 
-                                    
-                                          <TouchableOpacity
-                                                style={styles.buttoon}
-                                                onPress={() => {
-                                                      setModal({
-                                                            ...Modal,
-                                                            showModal: true,
+                              {addButton.showAddDrugButton && favDrugData.favouriteDrugs.length < 1 ?
 
-                                                      })
-                                                }}>
-                                                <LinearGradient
-                                                      colors={['green', '#01ab9d']}
-                                                      style={styles.buttoon}
-                                                >
-                                                      <Text style={[styles.textButton, {
-                                                            color: '#fff'
-                                                      }]}>Add to Favourite List </Text>
-                                                </LinearGradient>
-                                          </TouchableOpacity>
-                                          :
-                                          null
+                                    <TouchableOpacity
+                                          style={styles.buttoon}
+                                          onPress={() => {
+                                                setModal({
+                                                      ...Modal,
+                                                      showModal: true,
+
+                                                })
+                                          }}>
+                                          <LinearGradient
+                                                colors={['green', '#01ab9d']}
+                                                style={styles.buttoon}
+                                          >
+                                                <Text style={[styles.textButton, {
+                                                      color: '#fff'
+                                                }]}>Add to Favourite List </Text>
+                                          </LinearGradient>
+                                    </TouchableOpacity>
+                                    :
+                                    null
                               }
 
                               {cateData.categories.map((item) => (
@@ -258,8 +269,6 @@ const Treatments = ({ route, navigation, props }) => {
                         animationType="fade"
                         transparent={false}
                         visible={modal.showModal}
-
-
                   >
                         <View style={styles.modalView}>
 
@@ -310,11 +319,9 @@ export default TreatmentsScreen;
 const styles = StyleSheet.create({
       container: {
             flex: 1,
-            /*   alignItems: 'center',
-              justifyContent: 'center', */
+         
             paddingTop: 5,
             backgroundColor: '#fff',
-            //paddingHorizontal: 20
       },
       category_item: {
             fontSize: 12,

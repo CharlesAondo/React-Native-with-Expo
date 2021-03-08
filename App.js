@@ -27,9 +27,16 @@ import RootStackScreen from './Screens/RootStackScreen';
 import SearchScreen from './Screens/SearchScreen';
 import SettingsScreen from './Screens/SettingsScreen';
 import BookmarkScreen from './Screens/BookmarkScreen';
+import SupportScreen from './Screens/SupportScreen';
 import { AsyncStorage } from 'react-native';
 import useDatabase from './hooks/useDatabase';
+import * as SQLite from "expo-sqlite";
+import {getCurrentDate}  from './hooks/getCurrentDate';
 
+//DB declaration to be used throughout the page
+const db = SQLite.openDatabase('db.db');
+//Getting the current date 
+const date = getCurrentDate.currentDate();
 
 function cacheImages(images) {
       return images.map(image => {
@@ -44,16 +51,14 @@ function cacheImages(images) {
 
 const Drawer = createDrawerNavigator();
 const App = () => {
-    
+
       const isDBLoadingComplete = useDatabase();
-      console.log('Database Loading...........',isDBLoadingComplete);
-
-
+      console.log('Database Loading...........', isDBLoadingComplete);
 
       /*       const [isLoading, setIsLoding] = React.useState(true);
             const [userToken, setUserToken] = React.useState(null);
        */
-     
+
 
       const initialLoginState = {
             isLoading: true,
@@ -98,42 +103,64 @@ const App = () => {
       const [loginState, dispatch] = React.useReducer(loginReducer, initialLoginState)
       const authContext = React.useMemo(() => ({
             signIn: async (userTokenRetrived) => {
-                 const userToken = userTokenRetrived.token;
-                 console.log("Token extracted...",userToken);
-                        try {
-                              await AsyncStorage.setItem('userToken', userToken)
-                              console.log("Charles Setting Token From Login Screen:::",userToken);
-                        } catch(e){
-                              console.log("Unable to set user token for sign in .. ",e)
-                        }
-                
+
+                  const userToken = userTokenRetrived.token;
+                  console.log("Token extracted...", userToken);
+                  try {
+                        await AsyncStorage.setItem('userToken', userToken);
+                        await AsyncStorage.setItem('dateLoggedIn',date);
+                        
+                        console.log("Charles Setting Token From Login Screen:::", userToken);
+                  } catch (e) {
+                        console.log("Unable to set user token for sign in .. ", e)
+                  }
+
                   console.log('user token ', userToken);
                   dispatch({ type: 'LOGIN', token: userToken });
             },
-            signOut: async() => {
-                  try{
+            saveData: async (data) => {
+               
+              
+                  for (let key in data) {
+                        let obj = data[key];
+                        db.transaction(function (tx) {
+                              tx.executeSql(
+                                    'INSERT INTO vdi_user (name,email,support_counterpart,title,deleted_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?)',
+                                    [obj.name,obj.email,obj.support_counterpart,obj.title,obj.deleted_at,date,obj.updated_at],
+                                    (tx, results) => {
+                                          console.log('Results', results.rowsAffected);
+                                          if ('added to db',results.rowsAffected > 0) {
+                                                console.log('user added to db')
+                                          } else console.log('Failed add user to db....');
+                                    }
+                              );
+                        });
+                  }
+            },
+            signOut: async () => {
+                  try {
                         await AsyncStorage.removeItem('userToken');
-                  }catch(e){
+                  } catch (e) {
                         console.log("unable to sign out.. ", e);
                   }
                   dispatch({ type: 'LOGOUT' });
-                  
+
             },
             signUp: () => {
-                //  setUserToken('fgk');
+                  //  setUserToken('fgk');
                   //setIsLoding(false);
             }
       }), []);
 
       useEffect(() => {
-            setTimeout(async() => {
+            setTimeout(async () => {
                   let userToken;
                   userToken = null;
-                  try{
+                  try {
                         userToken = await AsyncStorage.getItem('userToken');
-                        console.log("Token From Loading Screen",userToken);
-                  }catch(e){
-                        console.log("Unable to get user token for sign in.....",e)
+                        console.log("Token From Loading Screen", userToken);
+                  } catch (e) {
+                        console.log("Unable to get user token for sign in.....", e)
                   }
                   dispatch({ type: 'REGISTER', token: userToken });
             }, 1000)
@@ -142,7 +169,7 @@ const App = () => {
       if (loginState.isLoading) {
             return (
                   <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center' }}>
-                        <ActivityIndicator size="large" color= "green"/>
+                        <ActivityIndicator size="large" color="green" />
                   </View>
             )
       }
@@ -154,6 +181,7 @@ const App = () => {
                                     <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
                                     <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
                                     <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
+                                    <Drawer.Screen name="SupportScreen" component={SupportScreen} />
                                     <Drawer.Screen name="SearchScreen" component={SearchScreen} />
                               </Drawer.Navigator>
                         )
