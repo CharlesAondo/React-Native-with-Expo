@@ -269,8 +269,6 @@ const Treatments = ({ route, navigation, props }) => {
                         animationType="fade"
                         transparent={false}
                         visible={modal.showModal}
-
-
                   >
                         <View style={styles.modalView}>
 
@@ -321,11 +319,9 @@ export default TreatmentsScreen;
 const styles = StyleSheet.create({
       container: {
             flex: 1,
-            /*   alignItems: 'center',
-              justifyContent: 'center', */
+         
             paddingTop: 5,
             backgroundColor: '#fff',
-            //paddingHorizontal: 20
       },
       category_item: {
             fontSize: 12,

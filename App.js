@@ -182,7 +182,7 @@ const App = () => {
                                     <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
                                     <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
                                     <Drawer.Screen name="SupportScreen" component={SupportScreen} />
-
+                                    <Drawer.Screen name="SearchScreen" component={SearchScreen} />
                               </Drawer.Navigator>
                         )
                               :

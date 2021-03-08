@@ -40,6 +40,7 @@ const SupportScreen = (navigation) => {
                   comment: val
             })
       }
+      
       const handlePress = () => {
             console.log('hello')
       }
