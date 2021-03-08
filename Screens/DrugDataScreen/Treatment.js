@@ -11,7 +11,8 @@ import { set } from 'react-native-reanimated';
 import { Modal, Button } from 'react-native-paper';
 import NetInfo from '@react-native-community/netinfo';
 import { AsyncStorage } from 'react-native';
-import {ReAuthorization} from '../Authentications/ReAuthorization';
+import { ReAuthorization } from '../Authentications/ReAuthorization';
+import { brands } from '../../database/brands';
 
 const TreatmentsStack = createStackNavigator();
 const Stack = createStackNavigator();
@@ -57,6 +58,7 @@ const Treatments = ({ route, navigation, props }) => {
 
       const [brandsData, setBrands] = React.useState({
             brands: '',
+            display_data:'',
             loadingBrands: true
       })
 
@@ -70,11 +72,10 @@ const Treatments = ({ route, navigation, props }) => {
             loading: true
       })
 
-
       useEffect(() => {
             ReAuthorization.reAuthuroized();
 
-           
+
             const categories = () => {
                   db.transaction(
                         tx => {
@@ -103,9 +104,11 @@ const Treatments = ({ route, navigation, props }) => {
                                     'select * from vdi_brand_drug vbd  INNER JOIN vdi_brands  vb on vbd.brand_id = vb.id  where drug_id = ' + drug.id,
                                     [],
                                     (_, { rows: { _array } }) => {
+                                    
                                           setBrands({
                                                 ...brandsData,
                                                 brands: _array,
+                                                display_data: (_array.length > 4) ? _array.slice(0,4) : _array,
                                                 loadingBrands: false
 
                                           })
@@ -190,6 +193,7 @@ const Treatments = ({ route, navigation, props }) => {
 
 
       }
+      console.log(brandsData.display_data)
       return (
             <View style={styles.container}>
 
@@ -220,7 +224,7 @@ const Treatments = ({ route, navigation, props }) => {
                                     null
                               }
 
-                              {cateData.categories.map((item) => (
+                              {/*         {cateData.categories.map((item) => (
                                     <View key={item.id}>
                                           <TouchableOpacity onPress={() => navigation.navigate('Details',
                                                 {
@@ -232,20 +236,48 @@ const Treatments = ({ route, navigation, props }) => {
                                           </TouchableOpacity>
                                     </View>
 
-                              ))}
+                              ))} */}
 
-                              <View key="item_brands">
-                                    <TouchableOpacity>
-                                          <Text style={styles.brands}>
-                                                <Text style={styles.brands_heading}>Brands/Synonyms{"\n"}</Text>
-                                                <Text style={styles.brand_item_list}>
-                                                      {brandsData.brands.map((item) => item.name).join(", ")}
+
+                              {cateData.categories === null || cateData.categories == "" || cateData.categories === undefined || cateData.categories === "null" ?
+                                    null
+                                    :
+                                    <React.Fragment>
+                                          <View >
+                                                <Text style={styles.category_item}>
+                                                      <Text >
+                                                            {cateData.categories.map((item) => item.name).join(", ")}
+                                                      </Text>
+
                                                 </Text>
-                                          </Text>
-                                    </TouchableOpacity>
-                              </View>
+                                          </View>
+                                    </React.Fragment>
+                              }
 
-                              <Text style={styles.indications_header}>INDICATIONS</Text>
+
+
+                              {brandsData.brands === null || brandsData.brands == "" || brandsData.brands === undefined || brandsData.brands === "null" ?
+                                    null
+                                    :
+                        
+                                    <React.Fragment>
+                                          <Text style={styles.header}>Brands/Synonyms</Text>
+                                          <View >
+                                                <TouchableOpacity>
+
+                                                      <Text style={styles.item}>
+                                                            <Text >
+                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
+                                                            </Text>
+
+                                                      </Text>
+                                                </TouchableOpacity>
+                                          </View>
+                                    </React.Fragment>
+                              }
+
+
+                              {/*   <Text style={styles.indications_header}>INDICATIONS</Text>
 
                               {data.treatment_data.map((item) => (
                                     <View key={item.id + "-" + item.dosage_id}>
@@ -262,7 +294,7 @@ const Treatments = ({ route, navigation, props }) => {
                                                 </Text>
                                           </TouchableOpacity>
                                     </View>
-                              ))}
+                              ))} */}
                         </ScrollView>
                   }
                   <Modal
@@ -319,12 +351,12 @@ export default TreatmentsScreen;
 const styles = StyleSheet.create({
       container: {
             flex: 1,
-         
+
             paddingTop: 5,
             backgroundColor: '#fff',
       },
       category_item: {
-            fontSize: 12,
+            fontSize: 20,
             fontStyle: 'italic',
             textAlign: "right",
             color: "grey",
@@ -423,4 +455,52 @@ const styles = StyleSheet.create({
             textAlign: 'center',
 
       },
+      item: {
+            marginTop: 3,
+            padding: 10,
+            backgroundColor: 'whitesmoke',
+            fontSize: 20,
+
+      },
+      contrainIndication_title: {
+            fontSize: 10,
+            fontWeight: 'bold',
+            fontSize: 15,
+            textAlign: 'center',
+            backgroundColor: '#108610',
+            height: 25,
+      },
+      space: {
+            fontSize: 10,
+            backgroundColor: 'white',
+            height: 35,
+      },
+      title: {
+            marginTop: 16,
+            paddingVertical: 8,
+            borderWidth: 4,
+            borderColor: "#20232a",
+            borderRadius: 6,
+            backgroundColor: "#61dafb",
+            color: "#20232a",
+            textAlign: "center",
+            fontSize: 20,
+            fontWeight: "bold"
+      },
+      header: {
+            marginTop: 10,
+            paddingVertical: 5,
+            borderWidth: 3,
+            borderColor: '#108610',
+            borderRadius: 6,
+            backgroundColor: '#108610',
+            color: "#20232a",
+            textAlign: "center",
+            fontSize: 15,
+            fontWeight: "bold"
+      },
+      format: {
+            fontWeight: "bold"
+      }
+
 })
