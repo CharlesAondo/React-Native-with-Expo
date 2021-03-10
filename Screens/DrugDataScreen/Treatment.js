@@ -13,7 +13,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { AsyncStorage } from 'react-native';
 import { ReAuthorization } from '../Authentications/ReAuthorization';
 import { brands } from '../../database/brands';
-
+import ModalComponent, { modalComponent } from '../../components/ModalComponent';
 const TreatmentsStack = createStackNavigator();
 const Stack = createStackNavigator();
 const db = SQLite.openDatabase('db.db')
@@ -34,6 +34,7 @@ const Treatments = ({ route, navigation, props }) => {
 
 
       const drug = React.useContext(AuthContext);
+
       const [drugs, setDrugs] = useState({})
 
       //const [modal, setModal] = useState('false');
@@ -58,7 +59,8 @@ const Treatments = ({ route, navigation, props }) => {
 
       const [brandsData, setBrands] = React.useState({
             brands: '',
-            display_data:'',
+            display_data: '',
+            showBrandsModal: false,
             loadingBrands: true
       })
 
@@ -73,8 +75,8 @@ const Treatments = ({ route, navigation, props }) => {
       })
 
       useEffect(() => {
-            ReAuthorization.reAuthuroized();
 
+            ReAuthorization.reAuthuroized();
 
             const categories = () => {
                   db.transaction(
@@ -104,11 +106,29 @@ const Treatments = ({ route, navigation, props }) => {
                                     'select * from vdi_brand_drug vbd  INNER JOIN vdi_brands  vb on vbd.brand_id = vb.id  where drug_id = ' + drug.id,
                                     [],
                                     (_, { rows: { _array } }) => {
-                                    
+                                          console.log('array from brands..', _array);
+                                          /*
+                                          _array.map((item)=>{
+                                                if(item.vdi_is_human_us_brand){
+                                                      var us={
+                                                            'name' : item.name,
+                                                            'isHuman' : item.vdi_is_human_us_brand,
+                                                            'isVet': item.vdi_is_vet_us_brand
+                                                      }
+                                                }
+                                                
+                                                setBrandsByCountryData({
+                                                      ...brandsByCountryData,
+                                                      usBrand:us
+                                                })
+
+                                          })
+                                          */
+
                                           setBrands({
                                                 ...brandsData,
                                                 brands: _array,
-                                                display_data: (_array.length > 4) ? _array.slice(0,4) : _array,
+                                                display_data: (_array.length > 4) ? _array.slice(0, 4) : _array,
                                                 loadingBrands: false
 
                                           })
@@ -157,15 +177,10 @@ const Treatments = ({ route, navigation, props }) => {
 
             }
 
-            const insertData = () => {
-
-            }
-
             categories(),
                   getBrands(),
                   getData(),
-                  getFavouriteDrugs(),
-                  insertData()
+                  getFavouriteDrugs()
       }, [])
 
       const saveFaveDrugs = () => {
@@ -190,16 +205,19 @@ const Treatments = ({ route, navigation, props }) => {
                         }
                   );
             });
-
-
       }
-      console.log(brandsData.display_data)
+
+
+
+
       return (
             <View style={styles.container}>
+
 
                   {data.isLoading || cateData.loadingCategory || brandsData.loadingBrands || data.isLoading || favDrugData.loadingFavs ? <ActivityIndicator color="green" size="large" /> :
 
                         <ScrollView>
+
                               {addButton.showAddDrugButton && favDrugData.favouriteDrugs.length < 1 ?
 
                                     <TouchableOpacity
@@ -224,21 +242,6 @@ const Treatments = ({ route, navigation, props }) => {
                                     null
                               }
 
-                              {/*         {cateData.categories.map((item) => (
-                                    <View key={item.id}>
-                                          <TouchableOpacity onPress={() => navigation.navigate('Details',
-                                                {
-
-                                                      treatment_data: item,
-                                                }
-                                          )}>
-                                                <Text style={styles.category_item}>{item.name}</Text>
-                                          </TouchableOpacity>
-                                    </View>
-
-                              ))} */}
-
-
                               {cateData.categories === null || cateData.categories == "" || cateData.categories === undefined || cateData.categories === "null" ?
                                     null
                                     :
@@ -255,15 +258,21 @@ const Treatments = ({ route, navigation, props }) => {
                               }
 
 
-
                               {brandsData.brands === null || brandsData.brands == "" || brandsData.brands === undefined || brandsData.brands === "null" ?
                                     null
                                     :
-                        
+
                                     <React.Fragment>
                                           <Text style={styles.header}>Brands/Synonyms</Text>
                                           <View >
-                                                <TouchableOpacity>
+                                                <TouchableOpacity
+                                                      onPress={() => {
+
+                                                            setBrands({
+                                                                  ...brandsData,
+                                                                  showBrandsModal: true
+                                                            })
+                                                      }}>
 
                                                       <Text style={styles.item}>
                                                             <Text >
@@ -277,26 +286,42 @@ const Treatments = ({ route, navigation, props }) => {
                               }
 
 
-                              {/*   <Text style={styles.indications_header}>INDICATIONS</Text>
-
-                              {data.treatment_data.map((item) => (
-                                    <View key={item.id + "-" + item.dosage_id}>
-                                          <TouchableOpacity onPress={() => navigation.navigate('DosageDetails', { dosage_data: item })}>
-                                                <Text key={item.dosage_id} style={styles.indication}>
-                                                      <Text style={styles.indication_name}>{item.indication_name}{"\n"}</Text>
-                                                      <Text>
-                                                            <Text style={styles.indication_dose}>{item.dose_min} {item.dose_max != "null" ? "-" + item.dose_max : ""}</Text>
-                                                            <Text>
-                                                                  <Text style={styles.dosage_label}>{item.label != "null" ? item.label : ""}</Text>
-                                                                  <Text style={styles.dosage_amount}>{item.unit} {item.route} {item.interval} {item.duration}</Text>
-                                                            </Text>
-                                                      </Text>
-                                                </Text>
-                                          </TouchableOpacity>
+                              {data.treatment_data === null || data.treatment_data == "" || data.treatment_data === undefined || data.treatment_data === "null" ?
+                                    <View >
+                                          <Text style={styles.header}>No Available Indications</Text>
+                                          <Text style={styles.item}>Indications do not exist, due to there being no safe separation between toxic and therapeutic dosages, or are not currently available in the VDI database.</Text>
                                     </View>
-                              ))} */}
+                                    :
+
+                                    <React.Fragment>
+                                          <View >
+                                                <Text style={styles.header}>Indications</Text>
+                                                {data.treatment_data.map((item) => (
+                                                      <View key={item.id + "-" + item.dosage_id} style={styles.item}>
+                                                            <TouchableOpacity onPress={() => navigation.navigate('DosageDetails', { dosage_data: item })}>
+                                                                  <Text key={item.dosage_id} style={styles.indication}>
+                                                                        <Text style={styles.indication_name}>{item.indication_name}{"\n"}</Text>
+                                                                        <Text>
+                                                                              <Text style={styles.indication_dose}>{item.dose_min} {item.dose_max != "null" ? "-" + item.dose_max : ""}</Text>
+                                                                              <Text>
+                                                                                    <Text style={styles.dosage_label}>{item.label != "null" ? item.label : null}</Text> {''}
+
+                                                                                    <Text style={styles.dosage_units}>{item.unit} {item.route} {item.interval}</Text>
+                                                                              </Text>
+                                                                        </Text>
+                                                                  </Text>
+                                                            </TouchableOpacity>
+                                                      </View>
+                                                ))}
+
+                                          </View>
+                                    </React.Fragment>
+                              }
+
                         </ScrollView>
                   }
+
+
                   <Modal
                         animationType="fade"
                         transparent={false}
@@ -327,14 +352,85 @@ const Treatments = ({ route, navigation, props }) => {
                               </View>
 
                         </View>
-                        <View style={styles.modalButtons}>
+                  </Modal>
+
+                  <Modal
+                        animationType="fade"
+                        transparent={false}
+                        visible={brandsData.showBrandsModal}
+                  >
+                        <View style={styles.modalView}>
+
+                              <ScrollView>
+                                    {brandsData.loadingBrands ? <ActivityIndicator color="green" size="large" /> :
+
+                                          <React.Fragment>
+                                                <Text style={styles.header}>United States</Text>
+                                                <View >
+                                                      <Text style={styles.item}>
+                                                            <Text >
+                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
+                                                            </Text>
+                                                      </Text>
+
+                                                </View>
+
+                                                <Text style={styles.header}>United Kingdom</Text>
+                                                <View >
+                                                      <Text style={styles.item}>
+                                                            <Text >
+                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
+                                                            </Text>
+                                                      </Text>
+
+                                                </View>
+
+                                                <Text style={styles.header}>Canada</Text>
+                                                <View >
+                                                      <Text style={styles.item}>
+                                                            <Text >
+                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
+                                                            </Text>
+                                                      </Text>
+
+                                                </View>
+
+                                                <Text style={styles.header}>Synonyms</Text>
+                                                <View >
+                                                      <Text style={styles.item}>
+                                                            <Text >
+                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
+                                                            </Text>
+                                                      </Text>
+
+                                                </View>
+
+                                          </React.Fragment>
+                                    }
+                              </ScrollView>
+
+
+                              <View >
+
+                                    <Button style={styles.buttonLeft} onPress={() => {
+                                          setBrands({
+                                                ...brandsData,
+                                                showBrandsModal: false
+                                          })
+                                    }}>Close</Button>
+
+
+                              </View>
 
                         </View>
                   </Modal>
 
+
+
             </View>
       )
 }
+
 //export default Treatments;
 
 const TreatmentsScreen = ({ navigation }) => {
@@ -351,9 +447,9 @@ export default TreatmentsScreen;
 const styles = StyleSheet.create({
       container: {
             flex: 1,
-
-            paddingTop: 5,
+            paddingTop: 10,
             backgroundColor: '#fff',
+            paddingHorizontal: 5
       },
       category_item: {
             fontSize: 20,
@@ -404,12 +500,13 @@ const styles = StyleSheet.create({
       },
       dosage_label: {
             fontSize: 12,
-            backgroundColor: "blue",
+            backgroundColor: "#1E90FF",
             color: "white",
-            maxWidth: "auto",
+            //maxWidth: "auto",
       },
-      dosage_amount: {
-            fontSize: 12,
+      dosage_units: {
+            fontSize: 15,
+            alignContent:'space-between',
             maxWidth: "auto",
       },
       buttoon: {
@@ -501,6 +598,23 @@ const styles = StyleSheet.create({
       },
       format: {
             fontWeight: "bold"
+      },
+      buttonLeft: {
+            backgroundColor: 'white',
+            borderRadius: 15,
+            padding: 5,
+            elevation: 2,
+            marginBottom: 0,
+            // marginLeft: 200
+
+      },
+      modalTitle: {
+            marginTop: 10,
+            color: "#20232a",
+            textAlign: "center",
+            fontSize: 15,
+            fontWeight: "bold",
+
       }
 
 })
