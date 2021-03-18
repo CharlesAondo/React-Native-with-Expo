@@ -10,17 +10,6 @@ import * as WebBrowser from 'expo-web-browser';
 const db = SQLite.openDatabase('db.db')
 let base64 = require('base-64');
 
-ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
-      db.transaction((trans) => {
-            trans.executeSql(sql, params, (trans, results) => {
-                  resolve(results);
-            },
-                  (error) => {
-                        reject(error);
-                  });
-      });
-});
-
 
 const Precautions = ({ route, navigation, props }) => {
 
@@ -194,7 +183,10 @@ const styles = StyleSheet.create({
             textAlign: "center",
             fontSize: 15,
             fontWeight: "bold"
-      }
+      },
+      format: {
+            fontWeight: "bold"
+      },
 
 
 })

@@ -14,6 +14,8 @@ import { AsyncStorage } from 'react-native';
 import { ReAuthorization } from '../Authentications/ReAuthorization';
 import { brands } from '../../database/brands';
 import ModalComponent, { modalComponent } from '../../components/ModalComponent';
+import { species } from '../../hooks/species';
+
 const TreatmentsStack = createStackNavigator();
 const Stack = createStackNavigator();
 const db = SQLite.openDatabase('db.db')
@@ -32,12 +34,12 @@ ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
 
 const Treatments = ({ route, navigation, props }) => {
 
+      var specieName = "";
+
 
       const drug = React.useContext(AuthContext);
 
       const [drugs, setDrugs] = useState({})
-
-      //const [modal, setModal] = useState('false');
 
       const [modal, setModal] = React.useState({
             showModal: false,
@@ -50,6 +52,10 @@ const Treatments = ({ route, navigation, props }) => {
       const [data, setData] = React.useState({
             treatment_data: '',
             isLoading: true
+      })
+      const [specie, setSpecie] = React.useState({
+            specie_name: '',
+
       })
 
       const [cateData, setCate] = React.useState({
@@ -106,7 +112,6 @@ const Treatments = ({ route, navigation, props }) => {
                                     'select * from vdi_brand_drug vbd  INNER JOIN vdi_brands  vb on vbd.brand_id = vb.id  where drug_id = ' + drug.id,
                                     [],
                                     (_, { rows: { _array } }) => {
-                                          console.log('array from brands..', _array);
                                           /*
                                           _array.map((item)=>{
                                                 if(item.vdi_is_human_us_brand){
@@ -143,7 +148,7 @@ const Treatments = ({ route, navigation, props }) => {
                   db.transaction(
                         tx => {
                               tx.executeSql(
-                                    'SELECT vd.id AS dosage_id, vd.label, vd.dose_min, vd.dose_max, vd.route, vd.duration, vd.interval, vd.administrative_notes, vd.pretreatment_notes, vu.name as unit, vt.* FROM vdi_treatments vt INNER JOIN vdi_dosages vd ON vd.treatment_id = vt.id LEFT OUTER JOIN vdi_units vu ON vu.id = vd.unit WHERE drug_id = ' + drug.id,
+                                    'SELECT vd.id AS dosage_id, vd.label, vd.dose_min, vd.dose_max, vd.duration, vd.interval, vd.administrative_notes, vd.pretreatment_notes,vr.name as route, vds.species_id as specieID,vu.name as unit, vt.* FROM vdi_treatments vt INNER JOIN vdi_dosages vd ON vd.treatment_id = vt.id LEFT OUTER JOIN vdi_units vu ON vu.id = vd.unit LEFT OUTER JOIN vdi_routes vr ON vr.id=vd.route INNER JOIN vdi_treatment_species vds on vds.treatment_id = vt.id WHERE drug_id = ' + drug.id,
                                     [],
                                     (_, { rows: { _array } }) => {
                                           setData({
@@ -189,7 +194,6 @@ const Treatments = ({ route, navigation, props }) => {
                         'INSERT INTO vdi_user_favourite_drugs (drug_id) VALUES (?)',
                         [drug.id],
                         (tx, results) => {
-                              console.log('Results', results.rowsAffected);
                               if (results.rowsAffected > 0) {
                                     setModal({
                                           ...modal,
@@ -200,7 +204,6 @@ const Treatments = ({ route, navigation, props }) => {
                                           ...addButton,
                                           showAddDrugButton: false
                                     })
-                                    console.log('added..', results.rowsAffected)
                               } else alert('Failed....');
                         }
                   );
@@ -208,7 +211,7 @@ const Treatments = ({ route, navigation, props }) => {
       }
 
 
-
+      console.log(data.treatment_data)
 
       return (
             <View style={styles.container}>
@@ -292,25 +295,44 @@ const Treatments = ({ route, navigation, props }) => {
                                           <Text style={styles.item}>Indications do not exist, due to there being no safe separation between toxic and therapeutic dosages, or are not currently available in the VDI database.</Text>
                                     </View>
                                     :
-
                                     <React.Fragment>
                                           <View >
                                                 <Text style={styles.header}>Indications</Text>
                                                 {data.treatment_data.map((item) => (
                                                       <View key={item.id + "-" + item.dosage_id} style={styles.item}>
+                                                            {/* Get the specie name using the specie id from the query */}
+
+                                                            {
+                                                                  species.map((specieItem) => {
+                                                                        if (item.specieID === specieItem.id) {
+                                                                              specieName = specieItem.name;
+                                                                        }
+
+                                                                  })
+                                                            }
+
                                                             <TouchableOpacity onPress={() => navigation.navigate('DosageDetails', { dosage_data: item })}>
+
                                                                   <Text key={item.dosage_id} style={styles.indication}>
-                                                                        <Text style={styles.indication_name}>{item.indication_name}{"\n"}</Text>
+
+                                                                        <Text style={styles.indication_name}>{item.indication_name}
+                                                                              <Text style={styles.specie}> ({specieName})</Text>
+                                                                              {"\n"}
+                                                                        </Text>
+
                                                                         <Text>
-                                                                              <Text style={styles.indication_dose}>{item.dose_min} {item.dose_max != "null" ? "-" + item.dose_max : ""}</Text>
+                                                                              <Text style={styles.indication_dose}>{item.dose_min} {item.dose_max != "null"  ? "-" + item.dose_max : ""}</Text>
                                                                               <Text>
                                                                                     <Text style={styles.dosage_label}>{item.label != "null" ? item.label : null}</Text> {''}
 
                                                                                     <Text style={styles.dosage_units}>{item.unit} {item.route} {item.interval}</Text>
                                                                               </Text>
                                                                         </Text>
+
                                                                   </Text>
+
                                                             </TouchableOpacity>
+
                                                       </View>
                                                 ))}
 
@@ -320,8 +342,6 @@ const Treatments = ({ route, navigation, props }) => {
 
                         </ScrollView>
                   }
-
-
                   <Modal
                         animationType="fade"
                         transparent={false}
@@ -408,7 +428,6 @@ const Treatments = ({ route, navigation, props }) => {
                                           </React.Fragment>
                                     }
                               </ScrollView>
-
 
                               <View >
 
@@ -506,7 +525,7 @@ const styles = StyleSheet.create({
       },
       dosage_units: {
             fontSize: 15,
-            alignContent:'space-between',
+            alignContent: 'space-between',
             maxWidth: "auto",
       },
       buttoon: {
@@ -615,6 +634,12 @@ const styles = StyleSheet.create({
             fontSize: 15,
             fontWeight: "bold",
 
+      },
+      specie: {
+            fontWeight: 'bold',
+            fontSize: 15,
+            color: 'red'
       }
+
 
 })
