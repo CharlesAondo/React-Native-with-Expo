@@ -1,6 +1,6 @@
 
 import React, { Component, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native'
 import { AuthContext } from '../../components/context'
 import * as SQLite from "expo-sqlite"
 import { createStackNavigator } from '@react-navigation/stack';
@@ -15,6 +15,8 @@ import { ReAuthorization } from '../Authentications/ReAuthorization';
 import { brands } from '../../database/brands';
 import ModalComponent, { modalComponent } from '../../components/ModalComponent';
 import { species } from '../../hooks/species';
+import { brandsImages } from '../../hooks/brandsImages';
+
 
 const TreatmentsStack = createStackNavigator();
 const Stack = createStackNavigator();
@@ -74,11 +76,23 @@ const Treatments = ({ route, navigation, props }) => {
             favouriteDrugs: '',
             loadingFavs: true
       })
+
       const [tokenData, setTokenValues] = React.useState({
             token: '',
             connectionState: false,
             loading: true
       })
+
+      const [synonyms, setSynonyms] = React.useState({
+            synonymsData: '',
+            loadingSynonyms: true
+      })
+
+      const [usBrands, setUsBrands] = React.useState({
+            usBrands_Data: '',
+            loadingUS: true
+      })
+
 
       useEffect(() => {
 
@@ -112,24 +126,6 @@ const Treatments = ({ route, navigation, props }) => {
                                     'select * from vdi_brand_drug vbd  INNER JOIN vdi_brands  vb on vbd.brand_id = vb.id  where drug_id = ' + drug.id,
                                     [],
                                     (_, { rows: { _array } }) => {
-                                          /*
-                                          _array.map((item)=>{
-                                                if(item.vdi_is_human_us_brand){
-                                                      var us={
-                                                            'name' : item.name,
-                                                            'isHuman' : item.vdi_is_human_us_brand,
-                                                            'isVet': item.vdi_is_vet_us_brand
-                                                      }
-                                                }
-                                                
-                                                setBrandsByCountryData({
-                                                      ...brandsByCountryData,
-                                                      usBrand:us
-                                                })
-
-                                          })
-                                          */
-
                                           setBrands({
                                                 ...brandsData,
                                                 brands: _array,
@@ -137,6 +133,24 @@ const Treatments = ({ route, navigation, props }) => {
                                                 loadingBrands: false
 
                                           })
+                                          _array.map((item) => {
+                                                if (item.vdi_is_human_us_brand || item.vdi_is_vet_us_brand) {
+                                                      var us = [
+                                                            {
+                                                                  name: item.name,
+                                                                  isHuman: (item.vdi_is_human_us_brand ? item.vdi_is_human_us_brand : 0),
+                                                                  isVet: (item.vdi_is_vet_us_brand ? item.vdi_is_vet_us_brand : 0)
+
+                                                            }
+                                                      ]
+                                                }
+                                                setUsBrands({
+                                                      ...usBrands,
+                                                      usBrands_Data: us
+                                                })
+
+                                          })
+
 
                                     }
                               );
@@ -178,14 +192,35 @@ const Treatments = ({ route, navigation, props }) => {
                                     }
                               );
                         },
+                  )
+            }
+
+            const getSynonyms = () => {
+                  db.transaction(
+                        tx => {
+                              tx.executeSql(
+                                    'SELECT * FROM vdi_drug_synonyms WHERE drug_id = ' + drug.id,
+                                    [],
+                                    (_, { rows: { _array } }) => {
+                                          setSynonyms({
+                                                ...synonyms,
+                                                synonymsData: _array,
+                                                loadingSynonyms: false
+                                          })
+                                    }
+                              );
+                        },
                   );
 
             }
 
+
             categories(),
                   getBrands(),
                   getData(),
-                  getFavouriteDrugs()
+                  getFavouriteDrugs(),
+                  getSynonyms()
+
       }, [])
 
       const saveFaveDrugs = () => {
@@ -211,7 +246,8 @@ const Treatments = ({ route, navigation, props }) => {
       }
 
 
-      console.log(data.treatment_data)
+      console.log(synonyms.synonymsData)
+
 
       return (
             <View style={styles.container}>
@@ -279,7 +315,8 @@ const Treatments = ({ route, navigation, props }) => {
 
                                                       <Text style={styles.item}>
                                                             <Text >
-                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
+                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}......
+
                                                             </Text>
 
                                                       </Text>
@@ -298,16 +335,14 @@ const Treatments = ({ route, navigation, props }) => {
                                     <React.Fragment>
                                           <View >
                                                 <Text style={styles.header}>Indications</Text>
-                                                {data.treatment_data.map((item) => (
-                                                      <View key={item.id + "-" + item.dosage_id} style={styles.item}>
+                                                {data.treatment_data.map((item, index) => (
+                                                      <View key={item.id + "-" + item.dosage_id + "_" + item.drug_id + "_" + index +1 } style={styles.item}>
                                                             {/* Get the specie name using the specie id from the query */}
-
                                                             {
                                                                   species.map((specieItem) => {
                                                                         if (item.specieID === specieItem.id) {
                                                                               specieName = specieItem.name;
                                                                         }
-
                                                                   })
                                                             }
 
@@ -321,7 +356,7 @@ const Treatments = ({ route, navigation, props }) => {
                                                                         </Text>
 
                                                                         <Text>
-                                                                              <Text style={styles.indication_dose}>{item.dose_min} {item.dose_max != "null"  ? "-" + item.dose_max : ""}</Text>
+                                                                              <Text style={styles.indication_dose}>{item.dose_min} {item.dose_max != "null" ? "-" + item.dose_max : ""}</Text>
                                                                               <Text>
                                                                                     <Text style={styles.dosage_label}>{item.label != "null" ? item.label : null}</Text> {''}
 
@@ -382,48 +417,121 @@ const Treatments = ({ route, navigation, props }) => {
                         <View style={styles.modalView}>
 
                               <ScrollView>
-                                    {brandsData.loadingBrands ? <ActivityIndicator color="green" size="large" /> :
+                                    {brandsData.loadingBrands || synonyms.loadingSynonyms ? <ActivityIndicator color="green" size="large" /> :
 
                                           <React.Fragment>
-                                                <Text style={styles.header}>United States</Text>
+                                                <View>
+                                                      <Text style={styles.header}>United States</Text>
+
+                                                      {brandsData.brands.map((item, index) => (
+                                                            item.vdi_is_human_us_brand || item.vdi_is_vet_us_brand ?
+
+                                                                  <View key={item.id + "_" + item.drug_id + "_" + index+4} style={styles.brands_image_display}>
+
+                                                                        <Text style={styles.brands}>
+                                                                              <Image source={brandsImages(item.vdi_is_human_us_brand, item.vdi_is_vet_us_brand)} />
+                                                                        </Text>
+                                                                        <Text style={styles.brands}>
+
+                                                                              <Text >{item.name}</Text>
+
+                                                                        </Text>
+
+                                                                  </View>
+                                                                  :
+                                                                  null
+
+                                                      ))}
+                                                </View>
+
                                                 <View >
-                                                      <Text style={styles.item}>
-                                                            <Text >
-                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
-                                                            </Text>
-                                                      </Text>
+                                                      <Text style={styles.header}>United Kingdom</Text>
+                                                      {brandsData.brands.map((item, index) => (
+                                                            item.vdi_is_human_uk_brand || item.vdi_is_vet_uk_brand ?
+
+                                                                  <View key={item.id + "_" + item.drug_id +"_"+ index+3} style={styles.brands_image_display}>
+
+                                                                        <Text style={styles.brands}>
+                                                                              <Image source={brandsImages(item.vdi_is_human_uk_brand, item.vdi_is_vet_uk_brand)} />
+                                                                        </Text>
+                                                                        <Text style={styles.brands}>
+
+                                                                              <Text >{item.name}</Text>
+
+                                                                        </Text>
+
+                                                                  </View>
+                                                                  :
+                                                                  null
+
+                                                      ))}
 
                                                 </View>
 
-                                                <Text style={styles.header}>United Kingdom</Text>
                                                 <View >
-                                                      <Text style={styles.item}>
-                                                            <Text >
-                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
-                                                            </Text>
-                                                      </Text>
+                                                      <Text style={styles.header}>Canada</Text>
+                                                      {brandsData.brands.map((item, index) => (
+                                                            item.vdi_is_human_ca_brand || item.vdi_is_vet_ca_brand ?
+
+                                                                  <View key={item.id + "_" + item.drug_id + "_" + index+2} style={styles.brands_image_display}>
+
+                                                                        <Text style={styles.brands}>
+                                                                              <Image source={brandsImages(item.vdi_is_human_ca_brand, item.vdi_is_vet_ca_brand)} />
+                                                                        </Text>
+                                                                        <Text style={styles.brands}>
+
+                                                                              <Text >{item.name}</Text>
+
+                                                                        </Text>
+
+                                                                  </View>
+                                                                  :
+                                                                  null
+
+                                                      ))}
+
+                                                </View>
+                                                <View >
+                                                      <Text style={styles.header}>Other Countries</Text>
+                                                      {brandsData.brands.map((item, index) => (
+                                                            item.vdi_is_other_countries ?
+
+                                                                  <View key={item.id + "_" + item.drug_id + '_' + index + 1} style={styles.item}>
+
+                                                                        <Text style={styles.brands}>
+
+                                                                              <Text >{item.name}</Text>
+
+                                                                        </Text>
+
+                                                                  </View>
+                                                                  :
+                                                                  null
+
+                                                      ))}
 
                                                 </View>
 
-                                                <Text style={styles.header}>Canada</Text>
-                                                <View >
-                                                      <Text style={styles.item}>
-                                                            <Text >
-                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
+                                                {synonyms.synonymsData.length === 0 ?
+
+                                                      null
+
+                                                      :
+                                                      <View>
+                                                            <Text style={styles.header}>Synonyms</Text>
+                                                            <Text style={styles.item}>
+                                                                  <Text >
+                                                                        {synonyms.synonymsData.map((item) => item.name).join(", ")}
+                                                                  </Text>
                                                             </Text>
-                                                      </Text>
 
-                                                </View>
 
-                                                <Text style={styles.header}>Synonyms</Text>
-                                                <View >
-                                                      <Text style={styles.item}>
-                                                            <Text >
-                                                                  {brandsData.display_data.map((item) => item.name).join(", ")}....
-                                                            </Text>
-                                                      </Text>
+                                                      </View>
+                                                      }
 
-                                                </View>
+
+
+
 
                                           </React.Fragment>
                                     }
@@ -478,12 +586,12 @@ const styles = StyleSheet.create({
             paddingEnd: 10
       },
       brands: {
-            textAlign: "left",
-            backgroundColor: '#cbfccb',
             paddingStart: 10,
             paddingEnd: 10,
             marginTop: 5,
-            marginBottom: 10
+            marginBottom: 10,
+
+
       },
       brands_heading: {
             color: "grey",
@@ -541,7 +649,7 @@ const styles = StyleSheet.create({
       },
       modalView: {
             margin: 20,
-            backgroundColor: 'whitesmoke',
+           backgroundColor: '#cbfccb',
             borderRadius: 20,
             padding: 35,
             alignItems: 'center',
@@ -613,7 +721,7 @@ const styles = StyleSheet.create({
             color: "#20232a",
             textAlign: "center",
             fontSize: 15,
-            fontWeight: "bold"
+            fontWeight: "bold",
       },
       format: {
             fontWeight: "bold"
@@ -639,7 +747,16 @@ const styles = StyleSheet.create({
             fontWeight: 'bold',
             fontSize: 15,
             color: 'red'
-      }
+      },
 
+      brands_image_display: {
+            fontSize: 10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: 3,
+            padding: 5,
+            backgroundColor:'white'
 
+      },
 })

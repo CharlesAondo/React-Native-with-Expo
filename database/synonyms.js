@@ -43,34 +43,6 @@ const insertDrugSynonymsToDatabaseAsync = async () => {
                   "created_at": "2020-05-06T15:47:42.000000Z",
                   "updated_at": "2020-11-04T01:57:44.000000Z",
                   "deleted_at": null
-            }
-      ];[
-            {
-                  "id": 1,
-                  "drug_id": 3,
-                  "name": "Ace",
-                  "is_visible": 0,
-                  "created_at": "2020-05-06T15:47:37.000000Z",
-                  "updated_at": "2020-11-04T01:57:44.000000Z",
-                  "deleted_at": null
-            },
-            {
-                  "id": 2,
-                  "drug_id": 3,
-                  "name": "Acetylpromazine",
-                  "is_visible": 0,
-                  "created_at": "2020-05-06T15:47:40.000000Z",
-                  "updated_at": "2020-11-04T01:57:44.000000Z",
-                  "deleted_at": null
-            },
-            {
-                  "id": 3,
-                  "drug_id": 3,
-                  "name": "ACP",
-                  "is_visible": 0,
-                  "created_at": "2020-05-06T15:47:42.000000Z",
-                  "updated_at": "2020-11-04T01:57:44.000000Z",
-                  "deleted_at": null
             },
             {
                   "id": 4,
@@ -1159,6 +1131,15 @@ const insertDrugSynonymsToDatabaseAsync = async () => {
                   "is_visible": 0,
                   "created_at": "2020-05-07T03:23:06.000000Z",
                   "updated_at": "2020-05-07T03:23:06.000000Z",
+                  "deleted_at": null
+            },
+            {
+                  "id": 125,
+                  "drug_id": 505,
+                  "name": "ddsd",
+                  "is_visible": 0,
+                  "created_at": "2020-10-30T20:26:14.000000Z",
+                  "updated_at": "2020-10-30T20:26:14.000000Z",
                   "deleted_at": null
             }
       ];
