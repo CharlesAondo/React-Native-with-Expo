@@ -19,9 +19,7 @@ function getInfo() {
 
 
 const reAuthuroized = async () => {
-      var myFunc = makeFunc();
-      myFunc();
-
+      
 
       const token = await AsyncStorage.getItem('userToken');
       const dateLoggedIn = await AsyncStorage.getItem('dateLoggedIn');
@@ -32,7 +30,6 @@ const reAuthuroized = async () => {
             console.log('Is connected?', state.isConnected); 
       })
 
-      console.log('checking connection status.....', myFunc())
 
       if (isNaN(token)) {
             //   alert(date)

@@ -20,6 +20,10 @@ import {formulations} from '../database/formulations';
 import {soundalikes} from '../database/soundalikes';
 import {formulationSpecie} from '../database/formulationSpecie';
 import {favDrugs} from '../database/favDrugs';
+import {treatment_references} from '../database/treatment_references';
+import {treatment_species} from '../database/treatment_species';
+import {synonyms}  from '../database/synonyms';
+
 const useDatabase = () => {
       const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
 
@@ -50,6 +54,9 @@ const useDatabase = () => {
                         await soundalikes.insertSoundAlikesAsync();
                         await formulationSpecie.insertFormulationSpecieAsync();
                         await favDrugs.insertFavDrugsToDatabaseAsync();
+                        await treatment_references.insertTreatmentReferenceToDatabaseAsync();
+                        await treatment_species.insertTreatmentSpeciesToDatabaseAsync();
+                        await synonyms.insertDrugSynonymsToDatabaseAsync();
 
 
                         setDBLoadingComplete(true);

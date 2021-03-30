@@ -120,7 +120,7 @@ const App = () => {
             },
             saveData: async (data) => {
                
-              
+            
                   for (let key in data) {
                         let obj = data[key];
                         db.transaction(function (tx) {

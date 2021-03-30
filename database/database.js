@@ -153,6 +153,24 @@ const setupCreateTablesAsync = async () => {
       let userTable = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_user (id INTEGER PRIMARY KEY,name varchar(25),email varchar(255),support_counterpart string,title varchar,deleted_at timestamp NULL DEFAULT NULL,created_at varchar,updated_at timestamp NULL DEFAULT NULL)", []);    
       console.log("Charles Creating VDI User! Table...........", userTable);
       console.log('....................................................................');
+
+
+
+      let treatmentReferences = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_treatment_references (id INTEGER PRIMARY KEY AUTOINCREMENT,treatment_id INTERGER(10),title varchar(255),pub_med_id INTERGER(10),url varchar(255),ebm INTERGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,deleted_at timestamp NULL DEFAULT NULL,FOREIGN KEY (treatment_id) REFERENCES vdi_treatments(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating VDI  Treatment  References! Table...........", treatmentReferences);
+      console.log('....................................................................');
+
+
+
+      let treatmentSpecies = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_treatment_species (id INTEGER PRIMARY KEY AUTOINCREMENT,treatment_id INTERGER(10),species_id INTERGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,FOREIGN KEY (treatment_id) REFERENCES vdi_treatments(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating VDI  Treatment  Species! Table...........", treatmentSpecies);
+      console.log('....................................................................');
+
+
+
+      let syonyms = await ExecuteQuery("CREATE TABLE IF NOT EXISTS vdi_drug_synonyms (id INTEGER PRIMARY KEY AUTOINCREMENT,drug_id INTERGER(10),name varchar(255),is_visible INTERGER(10),created_at timestamp NULL DEFAULT NULL,updated_at timestamp NULL DEFAULT NULL,deleted_at timestamp NULL DEFAULT NULL,FOREIGN KEY (drug_id) REFERENCES vdi_drugs(id))",'PRAGMA foreign_keys = ON', []);
+      console.log("Charles Creating VDI  Drug syonyms! Table...........", syonyms);
+      console.log('....................................................................');
       
 
 

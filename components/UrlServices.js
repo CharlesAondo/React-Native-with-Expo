@@ -24,6 +24,10 @@ const privacyPolicyUrl = () => {
 const supportURl = () => {
       return 'https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/support'
 }
+const pubMedURL = () => {
+      var url = 'https://pubmed.ncbi.nlm.nih.gov/';
+      return url;
+}
 
 export const UrlServices = {
       loginUrl,
@@ -33,5 +37,6 @@ export const UrlServices = {
       aboutAuthorsUrl,
       eulaURL,
       privacyPolicyUrl,
-      supportURl
+      supportURl,
+      pubMedURL,
 }
