@@ -32,6 +32,7 @@ const useDatabase = () => {
                   try {
 
                         // await database.dropDatabaseTablesAsync();
+                        
                         await database.setupCreateTablesAsync();
 
                         await database.insertCalculator()
@@ -58,8 +59,7 @@ const useDatabase = () => {
                         await treatment_species.insertTreatmentSpeciesToDatabaseAsync();
                         await synonyms.insertDrugSynonymsToDatabaseAsync();
 
-
-                        setDBLoadingComplete(true);
+                     setDBLoadingComplete(true);
                   } catch (e) {
                         console.warn('Warning From Loading Data', e);
                   }
