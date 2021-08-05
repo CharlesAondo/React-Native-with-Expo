@@ -8,80 +8,80 @@ import { Modal, Button } from 'react-native-paper';
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native'
 
 function getInfo() {
-      NetInfo.fetch().then((state) => {
-            const status = state.isConnected
-      });
-      return state.isConnected;
+    NetInfo.fetch().then((state) => {
+        const status = state.isConnected
+    });
+    return state.isConnected;
 
 }
 
 
 
 
-const reAuthuroized = async () => {
-      
-
-      const token = await AsyncStorage.getItem('userToken');
-      const dateLoggedIn = await AsyncStorage.getItem('dateLoggedIn');
-      const date = getCurrentDate.currentDate();
-
-      const unsubscribed = NetInfo.addEventListener((state) =>{
-            console.log('Connection type', state.type);
-            console.log('Is connected?', state.isConnected); 
-      })
+const reAuthuroized = async() => {
 
 
-      if (isNaN(token)) {
-            //   alert(date)
+    const token = await AsyncStorage.getItem('userToken');
+    const dateLoggedIn = await AsyncStorage.getItem('dateLoggedIn');
+    const date = getCurrentDate.currentDate();
 
-            let dateUserLoggedIn = new Date(dateLoggedIn).getTime();
-            console.log('date User Logged In ', dateUserLoggedIn);
-
-            let currentDate = new Date(date).getTime();
-            console.log('current date..', currentDate);
-
-            let thirtyDaysInMilliseconds = 2592000000;
-            console.log(currentDate - dateUserLoggedIn);
+    const unsubscribed = NetInfo.addEventListener((state) => {
+        console.log('Connection type', state.type);
+        console.log('Is connected?', state.isConnected);
+    })
 
 
-            if ((currentDate - dateUserLoggedIn) < thirtyDaysInMilliseconds) {
-                  //Log user out.
-                  //alert("Authentication Failed!")
-                  //  await AsyncStorage.removeItem('userToken');
+    if (isNaN(token)) {
+        //   alert(date)
+
+        let dateUserLoggedIn = new Date(dateLoggedIn).getTime();
+        console.log('date User Logged In ', dateUserLoggedIn);
+
+        let currentDate = new Date(date).getTime();
+        console.log('current date..', currentDate);
+
+        let thirtyDaysInMilliseconds = 2592000000;
+        console.log(currentDate - dateUserLoggedIn);
 
 
-            } else {
-                  alert('true')
-            }
+        if ((currentDate - dateUserLoggedIn) < thirtyDaysInMilliseconds) {
+            //Log user out.
+            alert("Authentication Failed!")
+            await AsyncStorage.removeItem('userToken');
 
-      } else {
+
+        } else {
+            alert('true')
+        }
+
+    } else {
 
 
-      }
+    }
 
 }
 
 export const ReAuthorization = {
-      reAuthuroized
+    reAuthuroized
 
 }
 const styles = StyleSheet.create({
 
-      modalView: {
-            margin: 20,
-            backgroundColor: 'green',
-            borderRadius: 20,
-            padding: 35,
-            alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: {
-                  width: 0,
-                  height: 5,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-      }
+    modalView: {
+        margin: 20,
+        backgroundColor: 'green',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    }
 
 })
 

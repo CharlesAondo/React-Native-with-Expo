@@ -1,42 +1,42 @@
 const loginUrl = () => {
-      return "https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/login";
+    return "link for authenticatioon goes here";
 }
 
 const authUrl = () => {
-      return 'https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/auth'
+    return 'link for auth goes here'
 }
 
 const sendEmaillUrl = () => {
-      return 'https://api.emailjs.com/api/v1.0/email/send'
+    return 'https://api.emailjs.com/api/v1.0/email/send'
 }
 const aboutTimelessUrl = () => {
-      return 'http://vetdrugindex.com/about/timeless/'
+    return 'http://vetdrugindex.com/about/timeless/'
 }
 const aboutAuthorsUrl = () => {
-      return 'http://vetdrugindex.com/about/authors/'
+    return 'http://vetdrugindex.com/about/authors/'
 }
 const eulaURL = () => {
-      return 'http://vetdrugindex.com/legal/eula/'
+    return 'http://vetdrugindex.com/legal/eula/'
 }
 const privacyPolicyUrl = () => {
-      return 'http://vetdrugindex.com/legal/privacypolicy/'
+    return 'http://vetdrugindex.com/legal/privacypolicy/'
 }
 const supportURl = () => {
-      return 'https://tvns-caondo.tvms-dev.timelessveterinary.com/client/vdi/v1/support'
+    return 'link for support goes here'
 }
 const pubMedURL = () => {
-      var url = 'https://pubmed.ncbi.nlm.nih.gov/';
-      return url;
+    var url = 'https://pubmed.ncbi.nlm.nih.gov/';
+    return url;
 }
 
 export const UrlServices = {
-      loginUrl,
-      authUrl,
-      sendEmaillUrl,
-      aboutTimelessUrl,
-      aboutAuthorsUrl,
-      eulaURL,
-      privacyPolicyUrl,
-      supportURl,
-      pubMedURL,
+    loginUrl,
+    authUrl,
+    sendEmaillUrl,
+    aboutTimelessUrl,
+    aboutAuthorsUrl,
+    eulaURL,
+    privacyPolicyUrl,
+    supportURl,
+    pubMedURL,
 }
